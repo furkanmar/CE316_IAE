@@ -8,10 +8,7 @@ public class Configuration {
     private String language;  //c,java etc
     private String filePath;  // projenin yolu
     private String[] commands ; //java için javac , c nin css gibi onların compiler ı
-    private String projectName ;  // projenin adı
-    private String output;  // projenin çıktısı
     private String configName;
-    //private String compilerPath;
 
 
     //setter-getter
@@ -39,28 +36,6 @@ public class Configuration {
         this.commands = commands;
     }
 
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = output;
-    }
-    /*public String getCompilerPath() {
-        return compilerPath;
-    }
-
-    public void setCompilerPath(String filePath) {
-        this.compilerPath = compilerPath;
-    }*/
 
 
     public void setConfigName(String configName) {
@@ -74,12 +49,10 @@ public class Configuration {
     //constructor
 
 
-    public Configuration(String language, String filePath, String[] commands, String projectName, String output, String configName) {
+    public Configuration(String language, String filePath, String[] commands, String configName) {
         this.language = language;
         this.filePath = filePath;
         this.commands = commands;
-        this.projectName = projectName;
-        this.output = output;
         this.configName = configName;
     }
 
@@ -90,8 +63,6 @@ public class Configuration {
                 "language='" + language + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", commands=" + Arrays.toString(commands) +
-                ", projectName='" + projectName + '\'' +
-                ", output='" + output + '\'' +
                 ", configName='" + configName + '\'' +
                 '}';
     }
