@@ -111,8 +111,8 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="İmport" />
-                        <Button fx:id="createconfig" layoutX="870.0" layoutY="271.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Create New" />
+                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" onAction="#ImportFile" prefHeight="51.0" prefWidth="150.0" text="İmport" />
+                        <Button fx:id="createconfig" layoutX="870.0" layoutY="271.0" mnemonicParsing="false" onAction="#createConfig" prefHeight="51.0" prefWidth="150.0" text="Save or Create New" />
                         <Label alignment="CENTER_RIGHT" layoutX="645.0" layoutY="118.0" prefHeight="49.0" prefWidth="214.0" text="Language:">
                            <font>
                               <Font name="System Bold" size="20.0" />
@@ -131,17 +131,17 @@
                         </Button>
                         <TableView fx:id="configtable" layoutX="34.0" layoutY="38.0" prefHeight="491.0" prefWidth="450.0">
                            <columns>
-                              <TableColumn prefWidth="150.0" text="Name" />
-                              <TableColumn prefWidth="150.0" text="Language" />
-                              <TableColumn prefWidth="150.0" text="Source File" />
+                              <TableColumn fx:id="configtablename" prefWidth="150.0" text="Name" />
+                              <TableColumn fx:id="configtablelang" prefWidth="150.0" text="Language" />
+                              <TableColumn fx:id="configtablesource" prefWidth="150.0" text="Source File" />
                            </columns>
                         </TableView>
-                        <Button fx:id="configedit" alignment="CENTER" layoutX="495.0" layoutY="427.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Edit">
+                        <Button fx:id="configedit" alignment="CENTER" layoutX="495.0" layoutY="427.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="51.0" prefWidth="150.0" text="Edit">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="configdelete" alignment="CENTER" layoutX="495.0" layoutY="478.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Edit">
+                        <Button fx:id="configdelete" alignment="CENTER" layoutX="495.0" layoutY="478.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Delete">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>

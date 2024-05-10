@@ -5,10 +5,9 @@ import java.util.Arrays;
 public class Configuration {
 
     //variables
-    private String language;  //c,java etc
-    private String filePath;  // projenin yolu
-    private String[] commands ; //java için javac , c nin css gibi onların compiler ı
-    private String configName;
+    public String language;  //c,java etc
+    public String filePath;  // projenin yolu
+    public String configName;
 
 
     //setter-getter
@@ -28,15 +27,6 @@ public class Configuration {
         this.filePath = filePath;
     }
 
-    public String[] getCommands() {
-        return commands;
-    }
-
-    public void setCommands(String[] commands) {
-        this.commands = commands;
-    }
-
-
 
     public void setConfigName(String configName) {
         this.configName = configName;
@@ -49,10 +39,9 @@ public class Configuration {
     //constructor
 
 
-    public Configuration(String language, String filePath, String[] commands, String configName) {
+    public Configuration(String language, String filePath,  String configName) {
         this.language = language;
         this.filePath = filePath;
-        this.commands = commands;
         this.configName = configName;
     }
 
@@ -62,7 +51,7 @@ public class Configuration {
         return "Configiration{" +
                 "language='" + language + '\'' +
                 ", filePath='" + filePath + '\'' +
-                ", commands=" + Arrays.toString(commands) +
+
                 ", configName='" + configName + '\'' +
                 '}';
     }
