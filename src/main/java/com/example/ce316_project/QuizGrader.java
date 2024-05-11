@@ -1,13 +1,13 @@
 package com.example.ce316_project;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.*;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 public class QuizGrader {
-    static String a;
 
     public static List<String> gradeSubmissions(String zipFilePath, String teacherCodePath) throws IOException {
         String subDirectory = "submissions_folder";
@@ -15,22 +15,17 @@ public class QuizGrader {
 
         List<File> submissions = unzip(zipFilePath, subDirectory);
         List<String> results = new ArrayList<>();
-        List<File> answer = unzip(teacherCodePath, teachDirectory);
-        for (File anw : answer) {
+        File answer = new File(teacherCodePath);
             String teacherOutputRaw;
-            if (anw.getName().endsWith(".java")) {
-                teacherOutputRaw = Compiler.compileAndRunJava("javac", anw.getPath(), "my_prgrm2");
-            } else if (anw.getName().endsWith(".cpp")) {
-                teacherOutputRaw = Compiler.compileAndRunCPlus("g++", anw.getPath(), "my_prgrm");
-            } else if (anw.getName().endsWith(".c")) {
-                teacherOutputRaw = Compiler.compileAndRun("gcc", anw.getPath(), "hello");
+            if (answer.getName().endsWith(".java")) {
+                teacherOutputRaw = Compiler.compileAndRunJava("javac", answer.getPath(), "my_prgrm2");
+            } else if (answer.getName().endsWith(".cpp")) {
+                teacherOutputRaw = Compiler.compileAndRunCPlus("g++", answer.getPath(), "my_prgrm");
+            } else if (answer.getName().endsWith(".c")) {
+                teacherOutputRaw = Compiler.compileAndRun("gcc", answer.getPath(), "hello");
             } else {
-                throw new IllegalArgumentException("Unsupported file type: " + anw.getName());
+                throw new IllegalArgumentException("Unsupported file type: " + answer.getName());
             }
-            a = teacherOutputRaw;
-        }
-
-        String expectedOutput = normalizeOutput(a);
 
         for (File submission : submissions) {
             String studentOutputRaw;
@@ -42,14 +37,19 @@ public class QuizGrader {
                 studentOutputRaw = Compiler.compileAndRunCPlus("g++", submission.getPath(), "my_prgrm");
                 output = normalizeOutput(studentOutputRaw);
             } else if (submission.getName().endsWith(".c")) {
+                System.out.println("Here");
                 studentOutputRaw = Compiler.compileAndRun("gcc", submission.getPath(), "hello");
                 output = normalizeOutput(studentOutputRaw);
             } else {
                 throw new IllegalArgumentException("Unsupported file type: " + submission.getName());
             }
+            String expectedOutput = normalizeOutput(teacherOutputRaw);
             int score = calculateScore(output, expectedOutput);
-            results.add(submission.getName() + ": " + score + "/100");
-            logOutputComparison(submission.getName(), output, expectedOutput, score);
+            results.add(new File(zipFilePath).getName().replaceAll("\\.zip$", ""));
+            results.add(output);
+            results.add(expectedOutput);
+            results.add(Integer.toString(score));
+            //logOutputComparison(submission.getName(), output, expectedOutput, score);
         }
         return results;
     }

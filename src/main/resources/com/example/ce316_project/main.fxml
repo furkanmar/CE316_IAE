@@ -20,21 +20,21 @@
                <content>
                   <AnchorPane id="quizmngpane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Label alignment="CENTER_RIGHT" layoutX="30.0" layoutY="14.0" prefHeight="53.0" prefWidth="84.0" text="Project:" textAlignment="CENTER">
+                        <Label alignment="CENTER_RIGHT" layoutX="30.0" layoutY="14.0" prefHeight="53.0" prefWidth="84.0" text="Configuration:" textAlignment="CENTER">
                            <font>
-                              <Font name="System Bold" size="22.0" />
+                              <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="projectCombo" layoutX="124.0" layoutY="20.0" prefHeight="42.0" prefWidth="150.0" promptText="Select " />
-                        <Button fx:id="openstudent" layoutX="180.0" layoutY="76.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="94.0" text="Open" />
+                        <ComboBox fx:id="configComboProject" layoutX="124.0" layoutY="20.0" prefHeight="42.0" prefWidth="150.0" promptText="Select " />
+                        <Button fx:id="openSubmissions" layoutX="180.0" layoutY="76.0" mnemonicParsing="false" onAction="#ImporStudentSubmissions" prefHeight="57.0" prefWidth="94.0" text="Open" />
                         <Button fx:id="updateTable" layoutX="30.0" layoutY="76.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="90.0" text="Update" />
                         <Label layoutX="297.0" layoutY="20.0" prefHeight="36.0" prefWidth="207.0" text="Expected Output:">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label fx:id="expected" alignment="TOP_LEFT" layoutX="297.0" layoutY="68.0" prefHeight="326.0" prefWidth="303.0" style="-fx-background-color: white;" />
-                        <Label fx:id="student" alignment="TOP_LEFT" layoutX="633.0" layoutY="68.0" prefHeight="326.0" prefWidth="303.0" style="-fx-background-color: white;" />
+                        <Label fx:id="expected" alignment="TOP_LEFT" layoutX="297.0" layoutY="68.0" prefHeight="326.0" prefWidth="303.0" style="-fx-background-color: white;" wrapText="true" />
+                        <Label fx:id="student" alignment="TOP_LEFT" layoutX="633.0" layoutY="68.0" prefHeight="326.0" prefWidth="303.0" style="-fx-background-color: white;" wrapText="true" />
                         <Label layoutX="633.0" layoutY="20.0" prefHeight="36.0" prefWidth="207.0" text="Student's Output:">
                            <font>
                               <Font name="System Bold" size="20.0" />
@@ -61,9 +61,7 @@
                            </font>
                         </Label>
                         <Button fx:id="run" layoutX="151.0" layoutY="588.0" mnemonicParsing="false" onAction="#QuizManagement" prefHeight="53.0" prefWidth="121.0" text="Run" />
-                        <Button fx:id="addAnswer" layoutX="30.0" layoutY="588.0" mnemonicParsing="false" onAction="#ImportAnswerFile" prefHeight="53.0" prefWidth="121.0" text="Add Answer" />
-                        <ListView fx:id="StudentTable" layoutX="30.0" layoutY="155.0" prefHeight="433.0" prefWidth="242.0" />
-                        <Button fx:id="addSub" layoutX="30.0" layoutY="641.0" mnemonicParsing="false" onAction="#ImportSourcFile" prefHeight="53.0" prefWidth="121.0" text="Add Submission" />
+                        <ListView fx:id="submissionsTable" layoutX="30.0" layoutY="155.0" prefHeight="433.0" prefWidth="242.0" />
                      </children>
                   </AnchorPane>
                </content>
@@ -84,7 +82,7 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="configCombo" layoutX="186.0" layoutY="119.0" prefHeight="51.0" prefWidth="150.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="28.0" layoutY="210.0" prefHeight="49.0" prefWidth="144.0" text="Student's File:">
+                        <Label alignment="CENTER_RIGHT" layoutX="28.0" layoutY="210.0" prefHeight="49.0" prefWidth="144.0" text="Student File:">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>

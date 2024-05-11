@@ -1,6 +1,8 @@
 package com.example.ce316_project;
 import com.google.gson.Gson;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,21 +10,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Controller implements Initializable {
     Gson gson = new Gson();
     String configimportfilepath;
+    String submissionFolderPath;
     String importedSourceFile;
     String examimportfilepath;
     String importedexamFile;
@@ -36,11 +39,14 @@ public class Controller implements Initializable {
     ArrayList<Project> projectList = new ArrayList<>();
     private FileChooser FileChooser = new FileChooser();
     private String expectedOutputPath;
+    ArrayList<File> submissionFiles = new ArrayList<>();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         langcombo.setOnMouseClicked(e -> langcombo());
         configCombo.setOnMouseClicked(e -> configcombo());
+        configComboProject.setOnMouseClicked(e -> configComboProject());
         projectCombo.setOnMouseClicked(e ->projectCombo());
     }
 
@@ -68,6 +74,20 @@ public class Controller implements Initializable {
 
         ObservableList<String> oblist = FXCollections.observableArrayList(nameOfFile);
         configCombo.setItems(oblist);
+    }
+
+    public void configComboProject() {
+        String configFilePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
+        File cFile = new File(configFilePath);
+        String[] files = cFile.list();
+        ArrayList<String> nameOfFile = new ArrayList<>();
+        for (String i : files) {
+            String name = i.split("\\.")[0];
+            nameOfFile.add(name);
+        }
+
+        ObservableList<String> oblist = FXCollections.observableArrayList(nameOfFile);
+        configComboProject.setItems(oblist);
     }
     @FXML
     public void projectCombo(){
@@ -140,6 +160,8 @@ public class Controller implements Initializable {
         importedSourceFile = selectedfile.getName();
         sourcefileimport.setText(importedSourceFile);
     }
+
+
 
     @FXML // arayüzdeki createConfigiration butonu ile aktifleşecek
     public void createConfig(ActionEvent event) {
@@ -301,6 +323,7 @@ public class Controller implements Initializable {
     @FXML
     public void createProject(ActionEvent event) throws IOException {
         File dir = new File(defaultDirectoryPath);
+        System.out.println(defaultDirectoryPath);
         dir.mkdir();
         File projectFile = new File(dir, "Project");
         projectFile.mkdir();
@@ -346,6 +369,9 @@ public class Controller implements Initializable {
         projectList.clear();
     }
 
+
+
+
     public void clearProjectMenu() {
         configCombo.setValue("");
         studentfileimport.setText("Import");
@@ -368,64 +394,41 @@ public class Controller implements Initializable {
         }
     }
 
-    //Quiz section
-
-    @FXML
-    public void ImportAnswerFile(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        File selectedfile = fileChooser.showOpenDialog(null);
-        answerimportfilePath = selectedfile.getAbsolutePath();
-        importedexamFile = selectedfile.getName();
-        addAnswer.setText(importedexamFile);
-    }
-    @FXML
-    public void ImportSourcFile(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        File selectedfile = fileChooser.showOpenDialog(null);
-        sourceimportfilePath = selectedfile.getAbsolutePath();
-        sourceimportFile = selectedfile.getName();
-        addSub.setText(sourceimportFile);
-    }
-
     @FXML
     public void QuizManagement(ActionEvent event) throws IOException{
-
-
-            String Project_Name=projectCombo.getValue();
-            String project_path = defaultDirectoryPath + File.separator + "Project" + File.separator +Project_Name+".json";
-            Project p2=readJsonFile_Project(project_path);
-            String config_path=defaultDirectoryPath + File.separator + "Configuration" + File.separator +p2.getConfig()+".json";
-            Configuration c2=readJsonFile_Configuration(config_path);
-
-            File submissionsZip=new File(p2.getExamsPath());
-            File sourceZip=new File(c2.filePath);
-            processSubmissions(p2.getExamsPath(),c2.getFilePath());
+        int selectedIndex = submissionsTable.getSelectionModel().getSelectedIndex();
+        String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + configComboProject.getValue() + ".json";
+        Configuration config = readJsonFile_Configuration(configPath);
+        assert config != null;
+        List<String> results = QuizGrader.gradeSubmissions(submissionFiles.get(selectedIndex).getPath(), config.getFilePath());
+        expected.setText(results.get(2));
+        student.setText(results.get(1));
+        idLabel.setText(results.get(0));
+        scoreLabel.setText(results.get(3));
 
     }
 
-
-    private void processSubmissions(String submissionsZipPath,String answersOutputPath) {
-        Thread gradingThread = new Thread(() -> {
-            try {
-                List<String> results = QuizGrader.gradeSubmissions(submissionsZipPath, answersOutputPath);
-                ObservableList<String> ob_result=FXCollections.observableArrayList(results);
-                StudentTable.setItems(ob_result);
-                //Platform.runLater(() -> resultsDisplay.setText(String.join("\n", results)));
-            } catch (Exception e) {
-                //Platform.runLater(() -> resultsDisplay.setText("Failed to grade submissions: " + e.getMessage()));
-            }
-        });
-        gradingThread.start();
+    @FXML
+    public void ImporStudentSubmissions(ActionEvent event) throws IOException {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null) {
+            submissionFolderPath = selectedDirectory.getAbsolutePath();
+            String importedSubmissionFile = selectedDirectory.getName();
+            updatedSubmissionsTable(event);
+        }
     }
 
-    private void configureFileChooser(FileChooser fileChooser) {
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("ZIP Files", "*.zip"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
-        );
+    @FXML
+    public void updatedSubmissionsTable(ActionEvent event) throws IOException {
+        File pFile = new File(submissionFolderPath);
+        submissionFiles = new ArrayList<>(Arrays.asList(pFile.listFiles()));
+        List<String> fileNames = submissionFiles.stream()
+                .map(File::getName)
+                .collect(Collectors.toList());
+        ObservableList<String> obProjectList = FXCollections.observableArrayList(fileNames);
+        submissionsTable.setItems(obProjectList);
     }
-
 
 
     @FXML
@@ -453,6 +456,9 @@ public class Controller implements Initializable {
     private TableView<Project> projecttable;
 
     @FXML
+    private ListView<String> submissionsTable;
+
+    @FXML
     private TableColumn<Project, String> projecttableconfig;
 
     @FXML
@@ -460,6 +466,8 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<Project, String> projecttablesource;
+
+    private TableColumn<File, String> submissionsName;
 
 
     @FXML
@@ -473,7 +481,8 @@ public class Controller implements Initializable {
 
     @FXML
     private ComboBox<String> configCombo=new ComboBox<>();
-
+    @FXML
+    private ComboBox<String> configComboProject =new ComboBox<>();
     @FXML
     private Button configdelete;
 
@@ -527,6 +536,8 @@ public class Controller implements Initializable {
 
     @FXML
     private Label student;
+    @FXML
+    private Button projectSelect;
 
 
 

@@ -97,27 +97,20 @@ public class Compiler {
     }
     public static String compileAndRunJava(String compilerPath, String sourceCodePath, String outputExecutablePath) {
         try {
-
             Process compileProcess = Runtime.getRuntime().exec(compilerPath + " -d " + outputExecutablePath + " " + sourceCodePath);
             compileProcess.waitFor();
-
             if (compileProcess.exitValue() != 0) {
                 return "Compilation error";
             }
-
             String mainClassName = findMainClassName(sourceCodePath);
             if (mainClassName == null) {
                 return "Main class not found";
             }
-
-
             createManifestFile(outputExecutablePath, mainClassName);
-
-            ProcessBuilder jarProcessBuilder = new ProcessBuilder("jar", "cvfm",mainClassName+ ".jar", "META-INF/MANIFEST.MF", ".");
+            ProcessBuilder jarProcessBuilder = new ProcessBuilder("jar", "cvfm", mainClassName + ".jar", "META-INF/MANIFEST.MF", ".");
             jarProcessBuilder.directory(new File(outputExecutablePath));
             Process jarProcess = jarProcessBuilder.start();
             jarProcess.waitFor();
-
             if (jarProcess.exitValue() != 0) {
                 BufferedReader jarErrorReader = new BufferedReader(new InputStreamReader(jarProcess.getErrorStream()));
                 StringBuilder errorMessage = new StringBuilder();
@@ -128,11 +121,21 @@ public class Compiler {
                 return "Jar creation error: " + errorMessage.toString();
             }
 
-            return "Compiled successfully. JAR file is saved to: " + outputExecutablePath;
+            Process runProcess = Runtime.getRuntime().exec("java -jar " + outputExecutablePath + "/" + mainClassName + ".jar");
+            BufferedReader runOutputReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
+            StringBuilder runOutput = new StringBuilder();
+            String line;
+            while ((line = runOutputReader.readLine()) != null) {
+                runOutput.append(line).append("\n");
+            }
+            runProcess.waitFor();
+
+            String output = runOutput.toString().trim();
+            return  output;
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            return "Error during compilation or JAR creation: " + e.getMessage();
+            return "Error during compilation, JAR creation, or execution: " + e.getMessage();
         }
     }
 
