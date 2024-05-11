@@ -24,16 +24,21 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
+    Gson gson = new Gson();
     String configimportfilepath;
     String importedSourceFile;
+    String examimportfilepath;
+    String importedexamFile;
     String defaultDirectoryPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+File.separator+"IAE";
     String filePath;
     ArrayList<Configuration> configList=new ArrayList<>();
+    ArrayList<Project> projectList=new ArrayList<>();
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         langcombo.setOnMouseClicked(e -> langcombo());
+        configCombo.setOnMouseClicked(e -> configcombo());
     }
     @FXML
     public void langcombo(){
@@ -45,10 +50,20 @@ public class Controller implements Initializable {
         ObservableList<String> oblist= FXCollections.observableArrayList(languageList);
         langcombo.setItems(oblist);
     }
+    @FXML
+    public void configcombo(){
+        ArrayList<String> confList=new ArrayList<>();
+        for (Configuration a:configList){
+            confList.add(a.getConfigName());
+        }
+        ObservableList<String > oblist= FXCollections.observableArrayList(confList);
+        configCombo.setItems(oblist);
+    }
 
 
 
-    private static Configuration readJsonFile(String filePath) throws IOException {
+
+    private static Configuration readJsonFile_Configuration(String filePath) throws IOException {
         try (FileReader fileReader = new FileReader(filePath)) {
             return new Gson().fromJson(fileReader, Configuration.class);
         } catch (FileNotFoundException e) {
@@ -59,13 +74,32 @@ public class Controller implements Initializable {
             return null;
         }
     }
+    private static Project readJsonFile_Project(String filePath) throws IOException {
+        try (FileReader fileReader = new FileReader(filePath)) {
+            return new Gson().fromJson(fileReader, Project.class);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found. Creating a new object.");
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @FXML
-    public void ImportFile(ActionEvent event) throws IOException{
+    public void ImportsourceFile(ActionEvent event) throws IOException{
         FileChooser fileChooser = new FileChooser();
         File selectedfile = fileChooser.showOpenDialog(null);
         configimportfilepath = selectedfile.getAbsolutePath();
         importedSourceFile= selectedfile.getName();
         sourcefileimport.setText(importedSourceFile);
+    }
+    @FXML
+    public void ImportexamFile(ActionEvent event) throws IOException{
+        FileChooser fileChooser = new FileChooser();
+        File selectedfile = fileChooser.showOpenDialog(null);
+        examimportfilepath = selectedfile.getAbsolutePath();
+        importedexamFile= selectedfile.getName();
+        studentfileimport.setText(importedexamFile);
     }
 
 
@@ -75,7 +109,7 @@ public class Controller implements Initializable {
         dir.mkdir();
         File configFile=new File(dir,"Configuration");
         configFile.mkdir();
-        Gson gson = new Gson();
+
 
         String language =langcombo.getValue();
         String fPath = configimportfilepath;
@@ -128,6 +162,53 @@ public class Controller implements Initializable {
         configname.setText("");
 
     }
+    public void clearProjectMenu(){
+        configCombo.setValue("");
+        studentfileimport.setText("Import");
+        projectName.setText("");
+
+    }
+    @FXML
+    public void createProject(ActionEvent event) throws IOException {
+        File dir=new File(defaultDirectoryPath);
+        dir.mkdir();
+        File projectFile=new File(dir,"Project");
+        projectFile.mkdir();
+        String config =configCombo.getValue();
+        String ExamsPath = examimportfilepath;
+        sourcefileimport.setText(importedexamFile);
+        String projectname = projectName.getText();
+        Project project = new Project(projectname,config,ExamsPath);
+        projectList.add(project);
+        String newJson = gson.toJson(project);
+
+        String newFilePath=projectname+".json";
+        File file = new File(projectFile,newFilePath);
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(newJson);
+            System.out.println("JSON written to file successfully.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        clearProjectMenu();
+        String projectFilePath=defaultDirectoryPath+File.separator+"Project"+File.separator;
+        File pFile=new File(projectFilePath);
+        String [] files=pFile.list();
+        for (String f:files){
+            String path=projectFilePath+f;
+            Project project1=readJsonFile_Project(path);
+            projectList.add(project1);
+        }
+        ObservableList<Project> obProjectList=FXCollections.observableArrayList(projectList);
+        projecttable.setItems(obProjectList);
+        projecttableconfig.setCellValueFactory(new PropertyValueFactory<>("config"));
+        projecttablesource.setCellValueFactory(new PropertyValueFactory<>("examsPath"));
+        projecttablename.setCellValueFactory(new PropertyValueFactory<>("projectName"));
+
+
+
+
+    }
 
 
 
@@ -149,6 +230,28 @@ public class Controller implements Initializable {
     }
 
     @FXML
+    private Button projectdelete;
+
+    @FXML
+    private Button projectedit;
+    @FXML
+    private Button projectupdate;
+
+
+    @FXML
+    private TableView<Project> projecttable;
+
+    @FXML
+    private TableColumn<Project, String> projecttableconfig;
+
+    @FXML
+    private TableColumn<Project, String> projecttablename;
+
+    @FXML
+    private TableColumn<Project, String> projecttablesource;
+
+
+    @FXML
     private TableColumn<Configuration, String> configtablelang;
 
     @FXML
@@ -158,7 +261,7 @@ public class Controller implements Initializable {
     private TableColumn<Configuration, String> configtablesource;
 
     @FXML
-    private ComboBox<?> configCombo;
+    private ComboBox<String> configCombo=new ComboBox<>();
 
     @FXML
     private Button configdelete;

@@ -1,9 +1,9 @@
 package com.example.ce316_project;
 
 public class Project {
-    private String projectName;
-    private Configuration config;
-    private String examsPath;
+    public String projectName;
+    public String config;
+    public String examsPath;
 
     public String getProjectName() {
         return projectName;
@@ -13,11 +13,11 @@ public class Project {
         this.projectName = projectName;
     }
 
-    public Configuration getConfig() {
+    public String getConfig() {
         return config;
     }
 
-    public void setConfig(Configuration config) {
+    public void setConfig(String config) {
         this.config = config;
     }
 
@@ -29,7 +29,7 @@ public class Project {
         this.examsPath = examsPath;
     }
 
-    public Project(String projectName, Configuration config, String examsPath) {
+    public Project(String projectName, String config, String examsPath) {
         this.projectName = projectName;
         this.config = config;
         this.examsPath = examsPath;
