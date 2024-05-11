@@ -104,12 +104,12 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="projectdelete" alignment="CENTER" layoutX="439.0" layoutY="482.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Delete">
+                        <Button fx:id="projectdelete" alignment="CENTER" layoutX="439.0" layoutY="482.0" mnemonicParsing="false" onAction="#deleteProject" prefHeight="51.0" prefWidth="150.0" text="Delete">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="projectupdate" alignment="CENTER" layoutX="439.0" layoutY="380.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Update">
+                        <Button fx:id="projectupdate" alignment="CENTER" layoutX="439.0" layoutY="380.0" mnemonicParsing="false" onAction="#updatedTableProject" prefHeight="51.0" prefWidth="150.0" text="Update">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -163,12 +163,12 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="configdelete" alignment="CENTER" layoutX="495.0" layoutY="478.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Delete">
+                        <Button fx:id="configdelete" alignment="CENTER" layoutX="495.0" layoutY="478.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="51.0" prefWidth="150.0" text="Delete">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="configupdate" alignment="CENTER" layoutX="495.0" layoutY="376.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Update">
+                        <Button fx:id="configupdate" alignment="CENTER" layoutX="495.0" layoutY="376.0" mnemonicParsing="false" onAction="#updateTableView" prefHeight="51.0" prefWidth="150.0" text="Update">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
