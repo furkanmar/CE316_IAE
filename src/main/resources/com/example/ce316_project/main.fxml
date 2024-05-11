@@ -99,7 +99,7 @@
                               <TableColumn fx:id="projecttablesource" prefWidth="150.0" text="Source File" />
                            </columns>
                         </TableView>
-                        <Button fx:id="projectedit" alignment="CENTER" layoutX="439.0" layoutY="431.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Edit">
+                        <Button fx:id="projectedit" alignment="CENTER" layoutX="439.0" layoutY="431.0" onAction="#openProject" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Edit">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>

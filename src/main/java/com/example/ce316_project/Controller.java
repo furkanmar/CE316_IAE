@@ -45,12 +45,17 @@ public class Controller implements Initializable {
         langcombo.setItems(oblist);
     }
     @FXML
-    public void configcombo(){
-        ArrayList<String> confList=new ArrayList<>();
-        for (Configuration a:configList){
-            confList.add(a.getConfigName());
+    public void configcombo()  {
+        String configFilePath=defaultDirectoryPath+File.separator+"Configuration"+File.separator;
+        File cFile=new File(configFilePath);
+        String [] files=cFile.list();
+        ArrayList<String>nameOfFile=new ArrayList<>();
+        for(String i:files){
+            String name=i.split("\\.")[0];
+            nameOfFile.add(name);
         }
-        ObservableList<String > oblist= FXCollections.observableArrayList(confList);
+
+        ObservableList<String > oblist= FXCollections.observableArrayList(nameOfFile);
         configCombo.setItems(oblist);
     }
     private static Configuration readJsonFile_Configuration(String filePath) throws IOException {
@@ -246,7 +251,6 @@ public class Controller implements Initializable {
                     return;
                 }
                 updatedTableProject(event);
-
             }
         }
 
@@ -312,6 +316,20 @@ public class Controller implements Initializable {
         studentfileimport.setText("Import");
         projectName.setText("");
 
+    }
+    @FXML
+    public void openProject(ActionEvent event) throws IOException {
+
+        int selectedIndex =projecttable.getSelectionModel().getSelectedIndex();
+        if (selectedIndex != -1) {
+            filePath = defaultDirectoryPath+File.separator+"Project"+File.separator + projecttable.getItems().get(selectedIndex).getProjectName();
+
+            Project project = projecttable.getItems().get(selectedIndex);
+            configCombo.setValue(project.getConfig());
+            String name = project.getProjectName().split("Project/")[0];
+            studentfileimport.setText(name);
+            projectName.setText(project.getProjectName());
+        }
     }
 
     @FXML
