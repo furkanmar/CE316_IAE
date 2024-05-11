@@ -1,8 +1,5 @@
 package com.example.ce316_project;
 import com.google.gson.Gson;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
@@ -405,7 +401,6 @@ public class Controller implements Initializable {
         student.setText(results.get(1));
         idLabel.setText(results.get(0));
         scoreLabel.setText(results.get(3));
-
     }
 
     @FXML
@@ -428,6 +423,23 @@ public class Controller implements Initializable {
                 .collect(Collectors.toList());
         ObservableList<String> obProjectList = FXCollections.observableArrayList(fileNames);
         submissionsTable.setItems(obProjectList);
+    }
+    @FXML
+    public void runAll(ActionEvent event) throws IOException {
+        int length=submissionsTable.getItems().size();
+        ArrayList<Integer> scores=new ArrayList<>();
+        for (int i=0;i<length;i++){
+            String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + configComboProject.getValue() + ".json";
+            Configuration config = readJsonFile_Configuration(configPath);
+            assert config != null;
+            List<String> results = QuizGrader.gradeSubmissions(submissionFiles.get(i).getPath(), config.getFilePath());
+            scores.add(Integer.valueOf(results.get(3)));
+        }
+        ObservableList<Integer> ob_score_list=FXCollections.observableArrayList(scores);
+        scoreTable.setItems(ob_score_list);
+
+
+
     }
 
 
@@ -457,6 +469,8 @@ public class Controller implements Initializable {
 
     @FXML
     private ListView<String> submissionsTable;
+    @FXML
+    private ListView<Integer> scoreTable;
 
     @FXML
     private TableColumn<Project, String> projecttableconfig;
