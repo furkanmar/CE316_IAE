@@ -90,7 +90,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="studentfileimport" layoutX="186.0" layoutY="209.0" mnemonicParsing="false" onAction="#ImportexamFile" prefHeight="51.0" prefWidth="150.0" text="İmport" />
+                        <Button fx:id="studentfileimport" layoutX="186.0" layoutY="209.0" mnemonicParsing="false" onAction="#ImportexamFile" prefHeight="51.0" prefWidth="150.0" text="Import" />
                         <Button fx:id="saveproject" layoutX="186.0" layoutY="340.0" mnemonicParsing="false" onAction="#createProject" prefHeight="51.0" prefWidth="150.0" text="Save" />
                         <TableView fx:id="projecttable" layoutX="589.0" layoutY="42.0" prefHeight="491.0" prefWidth="450.0">
                            <columns>
@@ -99,7 +99,7 @@
                               <TableColumn fx:id="projecttablesource" prefWidth="150.0" text="Source File" />
                            </columns>
                         </TableView>
-                        <Button fx:id="projectedit" alignment="CENTER" layoutX="439.0" layoutY="431.0" onAction="#openProject" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Edit">
+                        <Button fx:id="projectedit" alignment="CENTER" layoutX="439.0" layoutY="431.0" mnemonicParsing="false" onAction="#openProject" prefHeight="51.0" prefWidth="150.0" text="Edit">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -133,7 +133,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" onAction="#ImportsourceFile" prefHeight="51.0" prefWidth="150.0" text="İmport" />
+                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" onAction="#ImportsourceFile" prefHeight="51.0" prefWidth="150.0" text="Import" />
                         <Button fx:id="createconfig" layoutX="870.0" layoutY="271.0" mnemonicParsing="false" onAction="#createConfig" prefHeight="51.0" prefWidth="150.0" text="Save or Create New" />
                         <Label alignment="CENTER_RIGHT" layoutX="645.0" layoutY="118.0" prefHeight="49.0" prefWidth="214.0" text="Language:">
                            <font>
@@ -141,7 +141,7 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="langcombo" layoutX="870.0" layoutY="118.0" prefHeight="51.0" prefWidth="150.0" />
-                        <Button fx:id="importconfig" layoutX="870.0" layoutY="478.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="İmport Configuration">
+                        <Button fx:id="importconfig" layoutX="870.0" layoutY="478.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Import Configuration">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
