@@ -33,12 +33,12 @@
     &quot;assignee&quot;: &quot;furkanmar&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/furkanmar/CE316_IAE.git&quot;,
-    &quot;accountId&quot;: &quot;9c8c1411-1c74-494d-b778-759c2e3d1b78&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/furkanmar/CE316_IAE.git",
+    "accountId": "0f239153-83e4-46e8-ac90-420496e8dd37"
   }
-}</component>
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -57,6 +57,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/cansu/Belgeler/java/CE316_IAE",
     "settings.editor.selected.configurable": "editor.preferences.fonts.default"
@@ -172,6 +173,24 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/example/ce316_project/Compiler.java</url>
           <line>15</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java</url>
+          <line>348</line>
+          <properties class="com.example.ce316_project.Controller" method="createProject">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java</url>
+          <line>439</line>
+          <properties class="com.example.ce316_project.Controller" method="openProject">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

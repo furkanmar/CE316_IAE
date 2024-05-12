@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class Controller implements Initializable {
     private FileChooser FileChooser = new FileChooser();
     private String expectedOutputPath;
     ArrayList<File> submissionFiles = new ArrayList<>();
+    boolean projectOpened=false;
+    boolean configOpened=false;
+    String importConfigPath;
 
 
     @Override
@@ -160,60 +164,62 @@ public class Controller implements Initializable {
 
 
     @FXML // arayüzdeki createConfigiration butonu ile aktifleşecek
-    public void createConfig(ActionEvent event) {
-        File dir = new File(defaultDirectoryPath);
-        dir.mkdir();
-        File configFile = new File(dir, "Configuration");
-        configFile.mkdir();
-        Gson gson = new Gson();
+    public void createConfig(ActionEvent event) throws IOException {
+        if (configOpened){
+            int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
+            if (selectedIndex != -1) {
+                String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
+                String f2 = configPath + configtable.getItems().get(selectedIndex).getConfigName()+".json";
+                File file = new File(f2);
+                file.delete();
+                if (configimportfilepath==null) {
+                    configimportfilepath=configtable.getItems().get(selectedIndex).getFilePath();
+                }
+                Configuration config=new Configuration(langcombo.getValue(),configimportfilepath,configname.getText());
+                configOpened = false;
+                String newJson = gson.toJson(config);
 
+                String newFilePath = configname.getText() + ".json";
+                File f3 = new File(configPath, newFilePath);
+                try (FileWriter fileWriter = new FileWriter(f3)) {
+                    fileWriter.write(newJson);
+                    System.out.println("JSON written to file successfully.");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-        String language = langcombo.getValue();
-        String fPath = configimportfilepath;
-        sourcefileimport.setText(importedSourceFile);
-        String configName = configname.getText();
+            }
 
-        Configuration config = new Configuration(language, fPath, configName);
-
-        String newJson = gson.toJson(config);
-        String newFilePath = configName + ".json";
-        File file = new File(configFile, newFilePath);
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(newJson);
-            System.out.println("JSON written to file successfully.");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-        try {
-            updateTableView(event);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        else {
+            File dir = new File(defaultDirectoryPath);
+            dir.mkdir();
+            File configFile = new File(dir, "Configuration");
+            configFile.mkdir();
+            Gson gson = new Gson();
 
+
+            String language = langcombo.getValue();
+            String fPath = configimportfilepath;
+            sourcefileimport.setText(importedSourceFile);
+            String configName = configname.getText();
+
+            Configuration config = new Configuration(language, fPath, configName);
+
+            String newJson = gson.toJson(config);
+            String newFilePath = configName + ".json";
+            File file = new File(configFile, newFilePath);
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(newJson);
+                System.out.println("JSON written to file successfully.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        updateTableView(event);
         clearConfigMenu();
 
-
-        /*String defaultDirectoryPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
-        String quizzesPath = defaultDirectoryPath + File.separator + "Quizzes";
-        File quizzesDirectory = new File(quizzesPath);
-        if (!quizzesDirectory.exists()) {
-        quizzesDirectory.mkdirs();
-        }
-
-        String studentCodePath = quizzesPath + File.separator + info.getCourseCode() + File.separator + info.getSchoolId();
-        File studentDirectory = new File(studentCodePath);
-        if (!studentDirectory.exists()) {
-        studentDirectory.mkdirs();
-        }
-
-        String filePath = studentCodePath + File.separator + configName + ".json";
-        File file = new File(filePath);
-
-        try (FileWriter fileWriter = new FileWriter(file)) {
-        fileWriter.write(newJson);
-        System.out.println("JSON written to file successfully.");
-        } catch (IOException e) {
-        throw new RuntimeException(e);*/
     }
 
     @FXML
@@ -249,14 +255,37 @@ public class Controller implements Initializable {
 
         int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
-            filePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + configtable.getItems().get(selectedIndex).getConfigName();
 
             Configuration config = configtable.getItems().get(selectedIndex);
             langcombo.setValue(config.getLanguage());
-            String name = config.getConfigName().split("Configuration/")[0];
-            sourcefileimport.setText(name);
+            if (config.getFilePath()!=null){
+                Path p1= Paths.get(config.getFilePath());
+                sourcefileimport.setText(p1.getFileName().toString());
+            }
+            else sourcefileimport.setText("");
             configname.setText(config.getConfigName());
+            configOpened=true;
         }
+    }
+    @FXML
+    public void configClearButton(ActionEvent event){
+        clearConfigMenu();
+        configOpened=false;
+
+    }
+    @FXML
+    public void importConfig(ActionEvent event) throws IOException {
+        configOpened=false;
+        FileChooser fileChooser=new FileChooser();
+        File selectedFile=fileChooser.showOpenDialog(null);
+        importConfigPath=selectedFile.getPath();
+        Configuration config=readJsonFile_Configuration(importConfigPath);
+        configname.setText(config.getConfigName());
+        langcombo.setValue(config.getLanguage());
+        sourcefileimport.setText(config.getFilePath());
+        createConfig(event);
+
+
     }
 
     // PROJECT METHODS
@@ -318,31 +347,57 @@ public class Controller implements Initializable {
 
     @FXML
     public void createProject(ActionEvent event) throws IOException {
-        File dir = new File(defaultDirectoryPath);
-        System.out.println(defaultDirectoryPath);
-        dir.mkdir();
-        File projectFile = new File(dir, "Project");
-        projectFile.mkdir();
-        String config = configCombo.getValue();
-        String ExamsPath = examimportfilepath;
-        sourcefileimport.setText(importedexamFile);
-        String projectname = projectName.getText();
-        Project project = new Project(projectname, config, ExamsPath);
-        String newJson = gson.toJson(project);
+        if(projectOpened==true){//edit situation
+            int selectedIndex = projecttable.getSelectionModel().getSelectedIndex();
+            if (selectedIndex != -1) {
+                String projectPath= defaultDirectoryPath + File.separator + "Project" + File.separator;
+                String f2 = projectPath + projecttable.getItems().get(selectedIndex).getProjectName()+".json";
+                File file = new File(f2);
+                file.delete();
+                if (examimportfilepath==null) {
+                    examimportfilepath=projecttable.getItems().get(selectedIndex).getExamsPath();
+                }
+                Project project=new Project(projectName.getText(),configCombo.getValue(),examimportfilepath);
+                projectOpened = false;
+                String newJson = gson.toJson(project);
 
-        String newFilePath = projectname + ".json";
-        File file = new File(projectFile, newFilePath);
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(newJson);
-            System.out.println("JSON written to file successfully.");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                String newFilePath = projectName.getText() + ".json";
+                File f3 = new File(projectPath, newFilePath);
+                try (FileWriter fileWriter = new FileWriter(f3)) {
+                    fileWriter.write(newJson);
+                    System.out.println("JSON written to file successfully.");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
+        else {//create from the beginning
+            File dir = new File(defaultDirectoryPath);
+            System.out.println(defaultDirectoryPath);
+            dir.mkdir();
+            File projectFile = new File(dir, "Project");
+            projectFile.mkdir();
+            String config = configCombo.getValue();
+            String ExamsPath = examimportfilepath;
+            sourcefileimport.setText(importedexamFile);
+            String projectname = projectName.getText();
+            Project project = new Project(projectname, config, ExamsPath);
+            String newJson = gson.toJson(project);
+
+            String newFilePath = projectname + ".json";
+            File file = new File(projectFile, newFilePath);
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(newJson);
+                System.out.println("JSON written to file successfully.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         clearProjectMenu();
         updatedTableProject(event);
-
-
     }
+
 
     @FXML
     public void updatedTableProject(ActionEvent event) throws IOException {
@@ -374,19 +429,27 @@ public class Controller implements Initializable {
         projectName.setText("");
 
     }
+    @FXML
+    public void projectClearButton(ActionEvent event){
+        clearProjectMenu();
+        projectOpened=false;
+    }
+
 
     @FXML
     public void openProject(ActionEvent event) throws IOException {
 
         int selectedIndex = projecttable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
-            filePath = defaultDirectoryPath + File.separator + "Project" + File.separator + projecttable.getItems().get(selectedIndex).getProjectName();
-
             Project project = projecttable.getItems().get(selectedIndex);
             configCombo.setValue(project.getConfig());
-            String name = project.getProjectName().split("Project/")[0];
-            studentfileimport.setText(name);
+            if (project.getExamsPath()!=null){
+                Path p1= Paths.get(project.getExamsPath());
+                studentfileimport.setText(p1.getFileName().toString());
+            }
+            else studentfileimport.setText("");
             projectName.setText(project.getProjectName());
+            projectOpened=true;
         }
     }
 
