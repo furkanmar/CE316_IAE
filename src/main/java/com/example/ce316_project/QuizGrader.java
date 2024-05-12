@@ -16,16 +16,18 @@ public class QuizGrader {
         List<File> submissions = unzip(zipFilePath, subDirectory);
         List<String> results = new ArrayList<>();
         File answer = new File(teacherCodePath);
-            String teacherOutputRaw;
-            if (answer.getName().endsWith(".java")) {
-                teacherOutputRaw = Compiler.compileAndRunJava("javac", answer.getPath(), "my_prgrm2");
-            } else if (answer.getName().endsWith(".cpp")) {
-                teacherOutputRaw = Compiler.compileAndRunCPlus("g++", answer.getPath(), "my_prgrm");
-            } else if (answer.getName().endsWith(".c")) {
-                teacherOutputRaw = Compiler.compileAndRun("gcc", answer.getPath(), "hello");
-            } else {
-                throw new IllegalArgumentException("Unsupported file type: " + answer.getName());
-            }
+        String teacherOutputRaw;
+        if (answer.getName().endsWith(".java")) {
+            teacherOutputRaw = Compiler.compileAndRunJava("javac", answer.getPath(), "my_prgrm2");
+        } else if (answer.getName().endsWith(".cpp")) {
+            teacherOutputRaw = Compiler.compileAndRunCPlus("g++", answer.getPath(), "my_prgrm");
+        } else if (answer.getName().endsWith(".c")) {
+            teacherOutputRaw = Compiler.compileAndRun("gcc", answer.getPath(), "hello");
+        } else if (answer.getName().endsWith(".py")) {
+            teacherOutputRaw = Compiler.compileAndRunPython("python", answer.getPath());
+        } else {
+            throw new IllegalArgumentException("Unsupported file type: " + answer.getName());
+        }
 
         for (File submission : submissions) {
             String studentOutputRaw;
@@ -37,8 +39,10 @@ public class QuizGrader {
                 studentOutputRaw = Compiler.compileAndRunCPlus("g++", submission.getPath(), "my_prgrm");
                 output = normalizeOutput(studentOutputRaw);
             } else if (submission.getName().endsWith(".c")) {
-                System.out.println("Here");
                 studentOutputRaw = Compiler.compileAndRun("gcc", submission.getPath(), "hello");
+                output = normalizeOutput(studentOutputRaw);
+            } else if (submission.getName().endsWith(".py")) {
+                studentOutputRaw = Compiler.compileAndRunPython("python", submission.getPath());
                 output = normalizeOutput(studentOutputRaw);
             } else {
                 throw new IllegalArgumentException("Unsupported file type: " + submission.getName());
@@ -53,6 +57,7 @@ public class QuizGrader {
         }
         return results;
     }
+
 
 
     public static int calculateScore(String actualOutput, String expectedOutput) {

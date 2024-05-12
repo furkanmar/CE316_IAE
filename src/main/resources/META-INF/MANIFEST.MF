@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Main-Class: com.example.ce316_project.Launcher
+Class-Path: jetty-http-9.4.46.v20220331.jar javafx-fxml-17.0.6-win.jar j
+ etty-server-9.4.46.v20220331.jar commons-lang3-3.11.jar jetty-util-9.4.
+ 46.v20220331.jar jetty-util-ajax-9.4.46.v20220331.jar javafx-base-17.0.
+ 6.jar javax.servlet-api-3.1.0.jar javafx-fxml-17.0.6.jar javafx-control
+ s-17.0.6.jar jetty-xml-9.4.46.v20220331.jar jetty-security-9.4.46.v2022
+ 0331.jar jetty-webapp-9.4.46.v20220331.jar commons-text-1.9.jar javafx-
+ graphics-17.0.6-win.jar javafx-graphics-17.0.6.jar javafx-base-17.0.6-w
+ in.jar jetty-io-9.4.46.v20220331.jar javafx-controls-17.0.6-win.jar jet
+ ty-servlet-9.4.46.v20220331.jar gson-2.8.9.jar
+

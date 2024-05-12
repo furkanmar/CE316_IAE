@@ -138,6 +138,26 @@ public class Compiler {
             return "Error during compilation, JAR creation, or execution: " + e.getMessage();
         }
     }
+    public static String compileAndRunPython(String pythonCommand, String scriptPath) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder(pythonCommand, scriptPath);
+        Process process = processBuilder.start();
+        StringBuilder output = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        int exitCode;
+        try {
+            exitCode = process.waitFor();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Python process interrupted", e);
+        }
+        if (exitCode != 0) {
+            throw new RuntimeException("Python process returned non-zero exit code: " + exitCode);
+        }
+        return output.toString();
+    }
 
     private static String findMainClassName(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
