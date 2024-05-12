@@ -227,6 +227,17 @@ public class Controller implements Initializable {
         String configFilePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
         File cFile = new File(configFilePath);
         String[] files = cFile.list();
+        //is there a another config check
+        if (files == null || files.length == 0) {
+            //no config
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Configurations Found");
+            alert.setContentText("There are no configurations available. Please create one first.");
+            alert.showAndWait();
+            return;
+        }
+
         for (String c : files) {
             String path = configFilePath + c;
             Configuration config1 = readJsonFile_Configuration(path);
@@ -404,6 +415,14 @@ public class Controller implements Initializable {
         String projectFilePath = defaultDirectoryPath + File.separator + "Project" + File.separator;
         File pFile = new File(projectFilePath);
         String[] files = pFile.list();
+        if (files == null || files.length == 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Projects Found");
+            alert.setContentText("There are no project available. Please create one first.");
+            alert.showAndWait();
+            return;
+        }
         for (String f : files) {
             String path = projectFilePath + f;
             Project project1 = readJsonFile_Project(path);
@@ -419,6 +438,7 @@ public class Controller implements Initializable {
         projecttablename.setCellValueFactory(new PropertyValueFactory<>("projectName"));
         projectList.clear();
     }
+
 
 
 
