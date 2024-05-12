@@ -113,55 +113,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="projectClear" layoutX="108.0" layoutY="340.0" onAction="#projectClearButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="77.0" text="Clear" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab id="tabshowStudent" closable="false" style="-fx-background-color: #e9f6f6;" text="Show Student">
-               <content>
-                  <AnchorPane id="showstudent" minHeight="0.0" minWidth="0.0" prefHeight="491.0" prefWidth="1044.0">
-                     <children>
-                        <Label alignment="CENTER_RIGHT" layoutX="29.0" layoutY="42.0" prefHeight="49.0" prefWidth="141.0" text="Project Name:">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="projectName" layoutX="186.0" layoutY="42.0" prefHeight="50.0" prefWidth="149.0" promptText="Name" />
-                        <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="119.0" prefHeight="49.0" prefWidth="144.0" text="Configuration:">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="configCombo" layoutX="186.0" layoutY="119.0" prefHeight="51.0" prefWidth="150.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="28.0" layoutY="210.0" prefHeight="49.0" prefWidth="144.0" text="Student File:">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="studentfileimport" layoutX="186.0" layoutY="209.0" mnemonicParsing="false" onAction="#ImportexamFile" prefHeight="51.0" prefWidth="150.0" text="Import" />
-                        <Button fx:id="saveStudents" layoutX="186.0" layoutY="340.0" mnemonicParsing="false" onAction="#createProject" prefHeight="51.0" prefWidth="150.0" text="Save" />
-                        <TableView fx:id="studentTable" layoutX="365.0" layoutY="42.0" prefHeight="491.0" prefWidth="650.0">
-                           <columns>
-                              <TableColumn fx:id="studentName" prefWidth="300.0" text="Student ID" />
-                              <TableColumn fx:id="studentScore" prefWidth="350.0" text="Score" />
-                           </columns>
-                        </TableView>
-                        <Button fx:id="studentEdit" alignment="CENTER" layoutX="1021.0" layoutY="431.0" mnemonicParsing="false" onAction="#openProject" prefHeight="51.0" prefWidth="150.0" text="Edit">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="studentDelete" alignment="CENTER" layoutX="1021.0" layoutY="482.0" mnemonicParsing="false" onAction="#deleteProject" prefHeight="51.0" prefWidth="150.0" text="Delete">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="studentUpdate" alignment="CENTER" layoutX="1021.0" layoutY="380.0" mnemonicParsing="false" onAction="#updatedTableProject" prefHeight="51.0" prefWidth="150.0" text="Update">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
+                        <Button fx:id="projectClear" layoutX="108.0" layoutY="340.0" mnemonicParsing="false" onAction="#projectClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
                      </children>
                   </AnchorPane>
                </content>
@@ -189,7 +141,7 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="langcombo" layoutX="870.0" layoutY="118.0" prefHeight="51.0" prefWidth="150.0" />
-                        <Button fx:id="importconfig" layoutX="870.0" layoutY="478.0" onAction="#importConfig" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Import Configuration">
+                        <Button fx:id="importconfig" layoutX="870.0" layoutY="478.0" mnemonicParsing="false" onAction="#importConfig" prefHeight="51.0" prefWidth="150.0" text="Import Configuration">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
@@ -221,7 +173,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="configClear" layoutX="1021.0" layoutY="271.0" onAction="#configClearButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="77.0" text="Clear" />
+                        <Button fx:id="configClear" layoutX="1021.0" layoutY="271.0" mnemonicParsing="false" onAction="#configClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
                      </children>
                   </AnchorPane>
                </content>
