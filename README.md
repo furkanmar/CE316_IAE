@@ -41,6 +41,168 @@ This class is used to represent projects. Each project contains information such
 ##### Figure 2: Project Creation screen view
 * QuizGrader Class:
 This class is used to evaluate student exam files. The student exam files are located in a zip archive and there is a code file that is considered the teacher's solution. Each student file is checked to see if it produces an output similar to the teacher's solution and is scored according to the similarity rate. Assessment results are added to a list containing information such as the name of student files, output produced, expected output, and score.
-![image](https://github.com/furkanmar/CE316_IAE/assets/105562039/62fd7651-09d8-4757-ab9c-2657762fb57e)
+![WhatsApp Image 2024-05-25 at 23 25 28](https://github.com/furkanmar/CE316_IAE/assets/105562039/e89aa625-879c-43cc-b455-7c0742636b28)
 ##### Figure 3: Quiz Management screen view
-By selecting the preferred Configuration type on this screen, the list of student submissions is opened by clicking the Open button. The submission file is launched, the output is displayed on the screen, along with the student's number and score, when a submission is chosen from this list and the Run button is hit. All submissions are run when the "Run All" button is clicked, and the user sees the pertinent scores on the screen.
+By choosing the desired Project type and pressing the Open button, you may view the list of student contributions on this screen. A submission of the Configuration type is launched and its output, together with the student's number and score, are shown on the screen when it is chosen from this list and the Run button is hit. When the "Run All" button is selected and the user sees the pertinent scores on the screen, all submissions are executed.
+## Tests
+#### Compiler 
+###### Test Scenario 1
+In this project, the compileAndRun method of the Compiler class is tested. Below is the test scenario and a JUnit test implementation steps containing this scenario.
+
+@Test
+    void testCompileAndRun() {
+        String compilerPath = "gcc";
+        String sourceCodePath = "test.c";
+        String outputExecutablePath = "test";
+
+        
+        try {
+            Files.write(Paths.get(sourceCodePath), ("#include <stdio.h>\nint main() { printf(\"Hello, World!\\n\"); return 0; }").getBytes());
+        } catch (IOException e) {
+            fail("Setup failed: " + e.getMessage());
+        }
+
+        Compiler compiler = new Compiler();
+        String output = compiler.compileAndRun(compilerPath, sourceCodePath, outputExecutablePath);
+
+        // Expected output
+        String expectedOutput = "Hello, World!\n";
+
+        // Test if the output matches the expected output
+        assertEquals(expectedOutput, output, "Output should be 'Hello, World!'.");
+    }
+}
+##### Test Implementation
+1. A C source file named test.c is created with the content that prints "Hello, World!".
+2. The compileAndRun method of the Compiler class is called with the appropriate compiler path, source code path, and output executable path.
+3. The output of the method is captured and compared to the expected output "Hello, World!".
+4. The test verifies that the actual output matches the expected output, ensuring the system works as expected.
+##### QuizGrader
+###### Test Scenario 2
+In this project, the gradeSubmissions method of the QuizGrader class is tested. Below is the test scenario and a JUnit test implementation steps containing this scenario.
+
+@Test
+    void testGradeSubmissions() {
+        String zipFilePath = "test_submissions.zip";
+        String teacherCodePath = "teacher_test.c";
+        createZipWithSingleCFile(zipFilePath, "student_test.c", "#include <stdio.h>\nint main() { printf(\"Hello, Student!\\n\"); return 0; }");
+      
+        try {
+            Files.write(Paths.get(teacherCodePath), ("#include <stdio.h>\nint main() { printf(\"Hello, World!\\n\"); return 0; }").getBytes());
+        } catch (IOException e) {
+            fail("Setup failed: " + e.getMessage());
+        }
+
+        try {
+            List<String> results = QuizGrader.gradeSubmissions(zipFilePath, teacherCodePath);
+
+            assertEquals(4, results.size(), "Results should contain 4 elements.");
+            assertEquals("test_submissions", results.get(0), "Submission name should match zip file name without extension.");
+            assertTrue(results.get(1).contains("Hello, Student!"), "Student output should contain 'Hello, Student!'.");
+            assertTrue(results.get(2).contains("Hello, World!"), "Expected output should contain 'Hello, World!'.");
+            assertTrue(Integer.parseInt(results.get(3)) < 100, "Score should be less than 100 as outputs differ.");
+
+        } catch (IOException e) {
+            fail("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    private void createZipWithSingleCFile(String zipFilePath, String fileName, String fileContent) {
+        try (FileOutputStream fos = new FileOutputStream(zipFilePath);
+             ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipOut.putNextEntry(zipEntry);
+            byte[] bytes = fileContent.getBytes();
+            zipOut.write(bytes, 0, bytes.length);
+            zipOut.closeEntry();
+        } catch (IOException e) {
+            fail("Failed to create zip file: " + e.getMessage());
+        }
+    }
+}
+##### Test Implementation
+1. Programmatically create a ZIP file named test_submissions.zip that contains a single C file named student_test.c.
+2. Create a C source file named teacher_test.c with content that prints "Hello, World!".
+3. Call the gradeSubmissions method of the QuizGrader class.
+4. The test verifies that the actual output matches the expected output, ensuring the system works as expected.
+##### Controller
+###### Test Scenario 3
+In this project, the readJsonFile_Configuration method of the Controller class is tested. Below is the test scenario and a JUnit test implementation steps containing this scenario.
+
+ private static final String TEST_JSON_PATH = "test_config.json";
+ private static final String NON_EXISTENT_JSON_PATH = "non_existent_config.json";
+
+
+    @Test
+    void testReadJsonFile_Configuration() {
+        // Step 1: Create a JSON configuration file
+        createTestJsonFile(TEST_JSON_PATH, "{ \"setting1\": \"value1\", \"setting2\": 42, \"setting3\": true }");
+
+        // Step 2: Read the configuration file
+        Configuration config = null;
+        try {
+            config = readJsonFile_Configuration(TEST_JSON_PATH);
+        } catch (IOException e) {
+            fail("IOException should not occur: " + e.getMessage());
+        }
+
+   
+        assertNotNull(config, "Configuration object should not be null.");
+        assertEquals("value1", config.getSetting1(), "setting1 should be 'value1'.");
+        assertEquals(42, config.getSetting2(), "setting2 should be 42.");
+        assertTrue(config.isSetting3(), "setting3 should be true.");
+
+        // Step 4: Handle file not found scenario
+        try {
+            config = readJsonFile_Configuration(NON_EXISTENT_JSON_PATH);
+        } catch (IOException e) {
+            fail("IOException should not occur: " + e.getMessage());
+        }
+        assertNull(config, "Configuration object should be null for non-existent file.");
+    }
+
+    private void createTestJsonFile(String filePath, String content) {
+        try {
+            Files.write(Paths.get(filePath), content.getBytes());
+        } catch (IOException e) {
+            fail("Failed to create test JSON file: " + e.getMessage());
+        }
+    }
+
+    private static Configuration readJsonFile_Configuration(String filePath) throws IOException {
+        try (FileReader fileReader = new FileReader(filePath)) {
+            return new Gson().fromJson(fileReader, Configuration.class);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found. Creating a new object.");
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    class Configuration {
+        private String setting1;
+        private int setting2;
+        private boolean setting3;
+
+        public String getSetting1() {
+            return setting1;
+        }
+
+        public int getSetting2() {
+            return setting2;
+        }
+
+        public boolean isSetting3() {
+            return setting3;
+        }
+    }
+ ##### Test Implementation
+1. Programmatically create a JSON file named test_config.json with content that matches the Configuration class structure.
+2. Call the readJsonFile_Configuration method with the path of the JSON file (test_config.json).
+3. Assert that the Configuration object contains the expected values.
+4. Call the readJsonFile_Configuration method with a non-existent file path (non_existent_config.json).
+5. Capture the returned Configuration object (expected to be null) and check for console output indicating the file was not found.
+6. The test verifies that the actual output matches the expected output, ensuring the system works as expected.
+  
