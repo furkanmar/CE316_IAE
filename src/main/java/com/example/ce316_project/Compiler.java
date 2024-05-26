@@ -14,7 +14,11 @@ public class Compiler {
     public static String compileAndRun(String compilerPath, String sourceCodePath, String outputExecutablePath) {
         try {
             List<String> compileCommand = Arrays.asList(compilerPath, "-o", outputExecutablePath, sourceCodePath);
+            System.out.println("Compile command: " + String.join(" ", compileCommand));  // Log the actual command being run
+
             ProcessBuilder compileBuilder = new ProcessBuilder(compileCommand);
+            File gccBinDir = new File(compilerPath).getParentFile();
+            compileBuilder.environment().put("PATH", gccBinDir.getAbsolutePath() + File.pathSeparator + System.getenv("PATH"));
             compileBuilder.redirectErrorStream(true);
             Process compileProcess = compileBuilder.start();
 
@@ -26,7 +30,7 @@ public class Compiler {
             }
             int compileExitCode = compileProcess.waitFor();
             if (compileExitCode != 0) {
-                return compileOutput.toString();
+                return "Compilation failed:\n" + compileOutput.toString();
             }
 
             ProcessBuilder runBuilder = new ProcessBuilder(outputExecutablePath);
@@ -39,7 +43,10 @@ public class Compiler {
             while ((runLine = runOutputReader.readLine()) != null) {
                 runOutput.append(runLine).append("\n");
             }
-            runProcess.waitFor();
+            int runExitCode = runProcess.waitFor();
+            if (runExitCode != 0) {
+                return "Execution failed:\n" + runOutput.toString();
+            }
 
             return runOutput.toString();
 
@@ -51,16 +58,13 @@ public class Compiler {
 
     public static String compileAndRunCPlus(String compilerPath, String sourceCodePath, String outputExecutablePath) {
         try {
-            List<String> compileCommand = new ArrayList<>();
-            compileCommand.add(compilerPath);
-            compileCommand.add("-o");
-            compileCommand.add(outputExecutablePath);
-            compileCommand.add(sourceCodePath);
-
+            List<String> compileCommand = Arrays.asList(compilerPath, "-o", outputExecutablePath, sourceCodePath);
+            System.out.println("Compile command: " + String.join(" ", compileCommand));  // Log the actual command being run
             ProcessBuilder compileBuilder = new ProcessBuilder(compileCommand);
+            File gppBinDir = new File(compilerPath).getParentFile();
+            compileBuilder.environment().put("PATH", gppBinDir.getAbsolutePath() + File.pathSeparator + System.getenv("PATH"));
             compileBuilder.redirectErrorStream(true);
             Process compileProcess = compileBuilder.start();
-
             BufferedReader compileOutputReader = new BufferedReader(new InputStreamReader(compileProcess.getInputStream()));
             StringBuilder compileOutput = new StringBuilder();
             String compileLine;
@@ -70,16 +74,12 @@ public class Compiler {
             int compileExitCode = compileProcess.waitFor();
             if (compileExitCode != 0) {
                 System.err.println("Compilation error: " + compileOutput.toString());
-                return compileOutput.toString();
+                return "Compilation error:\n" + compileOutput.toString();
             }
-
-            List<String> runCommand = new ArrayList<>();
-            runCommand.add(outputExecutablePath);
-
-            ProcessBuilder runBuilder = new ProcessBuilder(runCommand);
+            ProcessBuilder runBuilder = new ProcessBuilder(outputExecutablePath);
+            runBuilder.environment().put("PATH", gppBinDir.getAbsolutePath() + File.pathSeparator + System.getenv("PATH"));
             runBuilder.redirectErrorStream(true);
             Process runProcess = runBuilder.start();
-
             BufferedReader runOutputReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
             StringBuilder runOutput = new StringBuilder();
             String runLine;
@@ -87,9 +87,12 @@ public class Compiler {
                 runOutput.append(runLine).append("\n");
             }
             runProcess.waitFor();
-
+            int runExitCode = runProcess.exitValue();
+            if (runExitCode != 0) {
+                System.err.println("Execution error: Exit code " + runExitCode);
+                return "Execution error: Exit code " + runExitCode;
+            }
             return runOutput.toString();
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return "Error during compilation or execution: " + e.getMessage();
@@ -97,6 +100,7 @@ public class Compiler {
     }
     public static String compileAndRunJava(String compilerPath, String sourceCodePath, String outputExecutablePath) {
         try {
+
             Process compileProcess = Runtime.getRuntime().exec(compilerPath + " -d " + outputExecutablePath + " " + sourceCodePath);
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
@@ -175,7 +179,7 @@ public class Compiler {
     }
 
     private static String extractMainClassName(String line) {
-        Pattern pattern = Pattern.compile("public\\s+class\\s+(\\w+)\\s*\\{");
+        Pattern pattern = Pattern.compile("class\\s+(\\w+)\\s*\\{");
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
             return matcher.group(1);

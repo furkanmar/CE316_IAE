@@ -1,30 +1,50 @@
 package com.example.ce316_project;
 
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.*;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
+import javax.swing.filechooser.FileSystemView;
+
 public class QuizGrader {
+    static String defaultDirectoryPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "IAE";
 
     public static List<String> gradeSubmissions(String zipFilePath, String teacherCodePath) throws IOException {
-        String subDirectory = "submissions_folder";
-        String teachDirectory = "teachDirectory_folder";
+        String subDirectory = defaultDirectoryPath + File.separator +  "out";
+        File parentDir = new File(subDirectory);
+        parentDir.mkdir();
+        File dir = new File(subDirectory + File.separator + "generatedExes");
+        dir.mkdir();
+
+        Path projectRoot = FileSystems.getDefault().getPath("").toAbsolutePath();
+        String gccPath = Paths.get(projectRoot.toString(), "compilers", "gcc", "bin", "gcc.exe").toString();
+        String gppPath = Paths.get(projectRoot.toString(), "compilers", "gcc", "bin", "g++.exe").toString();
+        String pythonPath = Paths.get(projectRoot.toString(), "compilers", "python", "python.exe").toString();
 
         List<File> submissions = unzip(zipFilePath, subDirectory);
         List<String> results = new ArrayList<>();
         File answer = new File(teacherCodePath);
         String teacherOutputRaw;
+
         if (answer.getName().endsWith(".java")) {
-            teacherOutputRaw = Compiler.compileAndRunJava("javac", answer.getPath(), "my_prgrm2");
+            File javaDir = new File(dir.getPath() + File.separator + "java");
+            javaDir.mkdir();
+            teacherOutputRaw = Compiler.compileAndRunJava("javac", answer.getPath(), javaDir + File.separator + "executable");
         } else if (answer.getName().endsWith(".cpp")) {
-            teacherOutputRaw = Compiler.compileAndRunCPlus("g++", answer.getPath(), "my_prgrm");
+            File cppDir = new File(dir.getPath() + File.separator + "cpp");
+            cppDir.mkdir();
+            teacherOutputRaw = Compiler.compileAndRunCPlus(gppPath, answer.getPath(), cppDir + File.separator + "executable");
         } else if (answer.getName().endsWith(".c")) {
-            teacherOutputRaw = Compiler.compileAndRun("gcc", answer.getPath(), "hello");
+            File cDir = new File(dir.getPath() + File.separator + "c");
+            cDir.mkdir();
+            teacherOutputRaw = Compiler.compileAndRun(gccPath, answer.getPath(), cDir + File.separator + "executable");
         } else if (answer.getName().endsWith(".py")) {
-            teacherOutputRaw = Compiler.compileAndRunPython("python", answer.getPath());
+            teacherOutputRaw = Compiler.compileAndRunPython(pythonPath, answer.getPath());
         } else {
             throw new IllegalArgumentException("Unsupported file type: " + answer.getName());
         }
@@ -33,27 +53,33 @@ public class QuizGrader {
             String studentOutputRaw;
             String output;
             if (submission.getName().endsWith(".java")) {
-                studentOutputRaw = Compiler.compileAndRunJava("javac", submission.getPath(), "my_prgrm2");
+                File javaDir = new File(dir.getPath() + File.separator + "java");
+                javaDir.mkdir();
+                studentOutputRaw = Compiler.compileAndRunJava("javac", submission.getPath(), javaDir + File.separator + "executable");
                 output = normalizeOutput(studentOutputRaw);
             } else if (submission.getName().endsWith(".cpp")) {
-                studentOutputRaw = Compiler.compileAndRunCPlus("g++", submission.getPath(), "my_prgrm");
+                File cppDir = new File(dir.getPath() + File.separator + "cpp");
+                cppDir.mkdir();
+                studentOutputRaw = Compiler.compileAndRunCPlus(gppPath, submission.getPath(), cppDir + File.separator + "executable");
                 output = normalizeOutput(studentOutputRaw);
             } else if (submission.getName().endsWith(".c")) {
-                studentOutputRaw = Compiler.compileAndRun("gcc", submission.getPath(), "hello");
+                File cDir = new File(dir.getPath() + File.separator + "c");
+                cDir.mkdir();
+                studentOutputRaw = Compiler.compileAndRun(gccPath, submission.getPath(), cDir + File.separator + "executable");
                 output = normalizeOutput(studentOutputRaw);
             } else if (submission.getName().endsWith(".py")) {
-                studentOutputRaw = Compiler.compileAndRunPython("python", submission.getPath());
+                studentOutputRaw = Compiler.compileAndRunPython(pythonPath, submission.getPath());
                 output = normalizeOutput(studentOutputRaw);
             } else {
                 throw new IllegalArgumentException("Unsupported file type: " + submission.getName());
             }
+
             String expectedOutput = normalizeOutput(teacherOutputRaw);
             int score = calculateScore(output, expectedOutput);
             results.add(new File(zipFilePath).getName().replaceAll("\\.zip$", ""));
             results.add(output);
             results.add(expectedOutput);
             results.add(Integer.toString(score));
-            //logOutputComparison(submission.getName(), output, expectedOutput, score);
         }
         return results;
     }
@@ -79,7 +105,7 @@ public class QuizGrader {
         System.out.println("Score: " + score);
     }
 
-    private static List<File> unzip(String zipFilePath, String destDirectory) throws IOException {
+    public static List<File> unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             destDir.mkdir();
@@ -88,6 +114,7 @@ public class QuizGrader {
         ZipEntry entry = zipIn.getNextEntry();
         List<File> files = new ArrayList<>();
         while (entry != null) {
+
             String filePath = destDirectory + File.separator + entry.getName();
             if (!entry.isDirectory()) {
                 extractFile(zipIn, filePath);
