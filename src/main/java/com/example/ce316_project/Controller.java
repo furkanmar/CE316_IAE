@@ -1,6 +1,7 @@
 package com.example.ce316_project;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -53,6 +54,25 @@ public class Controller implements Initializable {
         configComboProject.setOnMouseClicked(e -> projectCombo());
         projectCombo.setOnMouseClicked(e -> projectCombo());
 
+        // Load existing configurations and projects
+        loadExistingConfigurations();
+        loadExistingProjects();
+    }
+
+    private void loadExistingConfigurations() {
+        try {
+            updateTableView(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadExistingProjects() {
+        try {
+            updatedTableProject(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -133,8 +153,6 @@ public class Controller implements Initializable {
             alert.showAndWait();
             return;
         }
-
-
 
         filePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
         int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
@@ -414,6 +432,10 @@ public class Controller implements Initializable {
         } catch (FileNotFoundException e) {
             System.out.println("File not found. Creating a new object.");
             return null;
+        } catch (JsonSyntaxException e) {
+            System.out.println("JSON syntax error in file: " + filePath);
+            e.printStackTrace();
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -536,7 +558,9 @@ public class Controller implements Initializable {
         for (String f : files) {
             String path = projectFilePath + f;
             Project project1 = readJsonFile_Project(path);
-            projectList.add(project1);
+            if (project1 != null) {
+                projectList.add(project1);
+            }
         }
         projecttable.getItems().clear();
 
@@ -769,19 +793,5 @@ public class Controller implements Initializable {
     @FXML
     private TableView<?> table;
 
-    private void loadExistingConfigurations() {
-        try {
-            updateTableView(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void loadExistingProjects() {
-        try {
-            updatedTableProject(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
