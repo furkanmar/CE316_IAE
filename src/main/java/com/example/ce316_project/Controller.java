@@ -340,6 +340,7 @@ public class Controller implements Initializable {
             configOpened = true;
         }
     }
+
     @FXML
     void HelpButton(ActionEvent event) {
 
@@ -366,6 +367,7 @@ public class Controller implements Initializable {
         clearConfigMenu();
         configOpened = false;
     }
+
     @FXML
     public void importConfig(ActionEvent event) throws IOException {
         configOpened = false;
@@ -382,8 +384,28 @@ public class Controller implements Initializable {
                 // Add the new configuration to the list
                 configList.add(config);
 
-                // Update the table view
+                // Save the imported configuration to the default directory
+                String configFilePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + config.getConfigName() + ".json";
+                try (FileWriter fileWriter = new FileWriter(configFilePath)) {
+                    gson.toJson(config, fileWriter);
+                } catch (IOException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Import Failed");
+                    alert.setHeaderText("Failed to save imported configuration.");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                    return;
+                }
+
+                // Update the table view and configuration combo boxes
                 updateTableViewWithNewConfig(config);
+                refreshConfigComboBox();
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Import Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Configuration imported and saved successfully.");
+                alert.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Import Failed");
@@ -403,6 +425,20 @@ public class Controller implements Initializable {
         configtablelang.setCellValueFactory(new PropertyValueFactory<>("language"));
     }
 
+    private void refreshConfigComboBox() {
+        String configFilePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
+        File cFile = new File(configFilePath);
+        String[] files = cFile.list();
+        ArrayList<String> nameOfFile = new ArrayList<>();
+        for (String i : files) {
+            String name = i.split("\\.")[0];
+            nameOfFile.add(name);
+        }
+
+        ObservableList<String> oblist = FXCollections.observableArrayList(nameOfFile);
+        configCombo.setItems(oblist);
+        configComboProject.setItems(oblist);
+    }
 
     @FXML
     public void exportConfig(ActionEvent event) {
@@ -683,7 +719,6 @@ public class Controller implements Initializable {
         submissionsTable.setItems(obProjectList);
     }
 
-
     @FXML
     public void runAll(ActionEvent event) throws IOException {
         int length = submissionsTable.getItems().size();
@@ -816,6 +851,4 @@ public class Controller implements Initializable {
 
     @FXML
     private TableView<?> table;
-
-
 }
