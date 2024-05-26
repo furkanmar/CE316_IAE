@@ -1,4 +1,5 @@
 package com.example.ce316_project;
+
 import com.google.gson.Gson;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class Controller implements Initializable {
     Gson gson = new Gson();
@@ -34,20 +38,21 @@ public class Controller implements Initializable {
     String filePath;
     ArrayList<Configuration> configList = new ArrayList<>();
     ArrayList<Project> projectList = new ArrayList<>();
-    private FileChooser FileChooser = new FileChooser();
+    private FileChooser fileChooser = new FileChooser();
     private String expectedOutputPath;
-    ArrayList<File> submissionFiles = new ArrayList<>();
-    boolean projectOpened=false;
-    boolean configOpened=false;
+    List<String> submissionFiles = new ArrayList<>();
+    boolean projectOpened = false;
+    boolean configOpened = false;
     String importConfigPath;
-
+    String sourceFileExtension;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         langcombo.setOnMouseClicked(e -> langcombo());
         configCombo.setOnMouseClicked(e -> configcombo());
-        configComboProject.setOnMouseClicked(e -> configComboProject());
-        projectCombo.setOnMouseClicked(e ->projectCombo());
+        configComboProject.setOnMouseClicked(e -> projectCombo());
+        projectCombo.setOnMouseClicked(e -> projectCombo());
+
     }
 
     @FXML
@@ -89,8 +94,9 @@ public class Controller implements Initializable {
         ObservableList<String> oblist = FXCollections.observableArrayList(nameOfFile);
         configComboProject.setItems(oblist);
     }
+
     @FXML
-    public void projectCombo(){
+    public void projectCombo() {
         String projectFilePath = defaultDirectoryPath + File.separator + "Project" + File.separator;
         File pFile = new File(projectFilePath);
         String[] files = pFile.list();
@@ -101,7 +107,8 @@ public class Controller implements Initializable {
         }
 
         ObservableList<String> oblist = FXCollections.observableArrayList(nameOfFile);
-        projectCombo.setItems(oblist);
+        configComboProject.setItems(oblist); // Update configComboProject instead of projectCombo
+        projectCombo.setItems(oblist); // Keep this for the Project Creation tab
     }
 
     private static Configuration readJsonFile_Configuration(String filePath) throws IOException {
@@ -118,6 +125,15 @@ public class Controller implements Initializable {
 
     @FXML
     public void deleteConfig(ActionEvent event) throws IOException {
+        if (configtable.getItems().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Configurations Found");
+            alert.setContentText("There are no configurations available to delete.");
+            alert.showAndWait();
+            return;
+        }
+
         filePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
         int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
@@ -146,10 +162,8 @@ public class Controller implements Initializable {
                 }
 
                 updateTableView(event);
-
             }
         }
-
     }
 
     @FXML
@@ -158,24 +172,38 @@ public class Controller implements Initializable {
         File selectedfile = fileChooser.showOpenDialog(null);
         configimportfilepath = selectedfile.getAbsolutePath();
         importedSourceFile = selectedfile.getName();
+        sourceFileExtension = getFileExtension(importedSourceFile);
         sourcefileimport.setText(importedSourceFile);
     }
 
-
+    private String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
+    }
 
     @FXML // arayüzdeki createConfigiration butonu ile aktifleşecek
     public void createConfig(ActionEvent event) throws IOException {
-        if (configOpened){
+        String selectedLanguage = langcombo.getValue();
+        if (!isExtensionCompatible(selectedLanguage, sourceFileExtension)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Source File");
+            alert.setHeaderText("Source file extension does not match the selected language.");
+            alert.setContentText("Please select a valid source file for the chosen language.");
+            alert.showAndWait();
+            return;
+        }
+
+        if (configOpened) {
             int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
             if (selectedIndex != -1) {
                 String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
-                String f2 = configPath + configtable.getItems().get(selectedIndex).getConfigName()+".json";
+                String f2 = configPath + configtable.getItems().get(selectedIndex).getConfigName() + ".json";
                 File file = new File(f2);
                 file.delete();
-                if (configimportfilepath==null) {
-                    configimportfilepath=configtable.getItems().get(selectedIndex).getFilePath();
+                if (configimportfilepath == null) {
+                    configimportfilepath = configtable.getItems().get(selectedIndex).getFilePath();
                 }
-                Configuration config=new Configuration(langcombo.getValue(),configimportfilepath,configname.getText());
+                Configuration config = new Configuration(langcombo.getValue(), configimportfilepath, configname.getText());
                 configOpened = false;
                 String newJson = gson.toJson(config);
 
@@ -190,14 +218,12 @@ public class Controller implements Initializable {
 
             }
 
-        }
-        else {
+        } else {
             File dir = new File(defaultDirectoryPath);
             dir.mkdir();
             File configFile = new File(dir, "Configuration");
             configFile.mkdir();
             Gson gson = new Gson();
-
 
             String language = langcombo.getValue();
             String fPath = configimportfilepath;
@@ -219,7 +245,21 @@ public class Controller implements Initializable {
         }
         updateTableView(event);
         clearConfigMenu();
+    }
 
+    private boolean isExtensionCompatible(String language, String extension) {
+        switch (language) {
+            case "Java":
+                return "java".equalsIgnoreCase(extension);
+            case "C++":
+                return "cpp".equalsIgnoreCase(extension);
+            case "Python":
+                return "py".equalsIgnoreCase(extension);
+            case "C":
+                return "c".equalsIgnoreCase(extension);
+            default:
+                return false;
+        }
     }
 
     @FXML
@@ -227,14 +267,9 @@ public class Controller implements Initializable {
         String configFilePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
         File cFile = new File(configFilePath);
         String[] files = cFile.list();
-        //is there a another config check
+        // Check if there are any configurations
         if (files == null || files.length == 0) {
-            //no config
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("No Configurations Found");
-            alert.setContentText("There are no configurations available. Please create one first.");
-            alert.showAndWait();
+            configtable.getItems().clear(); // Clear table if no configurations found
             return;
         }
 
@@ -245,7 +280,7 @@ public class Controller implements Initializable {
         }
         configtable.getItems().clear();
 
-        //re-adding
+        // Re-adding
         ObservableList<Configuration> configurationList = FXCollections.observableArrayList(configList);
         configtable.setItems(configurationList);
         configtablename.setCellValueFactory(new PropertyValueFactory<>("configName"));
@@ -258,45 +293,95 @@ public class Controller implements Initializable {
         langcombo.setValue("");
         sourcefileimport.setText("Import");
         configname.setText("");
-
     }
 
     @FXML
-    public void openConfig(ActionEvent event) throws IOException {  // also edit can do from there
+    public void openConfig(ActionEvent event) throws IOException {
+        if (configtable.getItems().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Configurations Found");
+            alert.setContentText("There are no configurations available to edit.");
+            alert.showAndWait();
+            return;
+        }
 
         int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
-
             Configuration config = configtable.getItems().get(selectedIndex);
             langcombo.setValue(config.getLanguage());
-            if (config.getFilePath()!=null){
-                Path p1= Paths.get(config.getFilePath());
+            if (config.getFilePath() != null) {
+                Path p1 = Paths.get(config.getFilePath());
                 sourcefileimport.setText(p1.getFileName().toString());
+            } else {
+                sourcefileimport.setText("");
             }
-            else sourcefileimport.setText("");
             configname.setText(config.getConfigName());
-            configOpened=true;
+            configOpened = true;
         }
     }
-    @FXML
-    public void configClearButton(ActionEvent event){
-        clearConfigMenu();
-        configOpened=false;
 
+    @FXML
+    public void configClearButton(ActionEvent event) {
+        clearConfigMenu();
+        configOpened = false;
     }
+
     @FXML
     public void importConfig(ActionEvent event) throws IOException {
-        configOpened=false;
-        FileChooser fileChooser=new FileChooser();
-        File selectedFile=fileChooser.showOpenDialog(null);
-        importConfigPath=selectedFile.getPath();
-        Configuration config=readJsonFile_Configuration(importConfigPath);
+        configOpened = false;
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+        importConfigPath = selectedFile.getPath();
+        Configuration config = readJsonFile_Configuration(importConfigPath);
         configname.setText(config.getConfigName());
         langcombo.setValue(config.getLanguage());
         sourcefileimport.setText(config.getFilePath());
         createConfig(event);
+    }
 
+    @FXML
+    public void exportConfig(ActionEvent event) {
+        Configuration selectedConfig = configtable.getSelectionModel().getSelectedItem();
+        if (selectedConfig != null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName(selectedConfig.getConfigName() + ".json");
+            File exportFile = fileChooser.showSaveDialog(null);
 
+            if (exportFile != null) {
+                if (exportFile.exists()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("File Exists");
+                    alert.setHeaderText("The file already exists.");
+                    alert.setContentText("Do you want to overwrite the existing file?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() != ButtonType.OK) {
+                        return;
+                    }
+                }
+
+                try (FileWriter writer = new FileWriter(exportFile)) {
+                    gson.toJson(selectedConfig, writer);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Export Successful");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Configuration exported successfully.");
+                    alert.showAndWait();
+                } catch (IOException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Export Failed");
+                    alert.setHeaderText("Failed to export configuration.");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Configuration Selected");
+            alert.setContentText("Please select a configuration to export.");
+            alert.showAndWait();
+        }
     }
 
     // PROJECT METHODS
@@ -315,6 +400,15 @@ public class Controller implements Initializable {
 
     @FXML
     public void deleteProject(ActionEvent event) throws IOException {
+        if (projecttable.getItems().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Projects Found");
+            alert.setContentText("There are no projects available to delete.");
+            alert.showAndWait();
+            return;
+        }
+
         filePath = defaultDirectoryPath + File.separator + "Project" + File.separator;
         int selectedIndex = projecttable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
@@ -344,13 +438,12 @@ public class Controller implements Initializable {
                 updatedTableProject(event);
             }
         }
-
     }
 
     @FXML
     public void ImportexamFile(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        File selectedfile = fileChooser.showOpenDialog(null);
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        File selectedfile = dirChooser.showDialog(null);
         examimportfilepath = selectedfile.getAbsolutePath();
         importedexamFile = selectedfile.getName();
         studentfileimport.setText(importedexamFile);
@@ -358,17 +451,17 @@ public class Controller implements Initializable {
 
     @FXML
     public void createProject(ActionEvent event) throws IOException {
-        if(projectOpened==true){//edit situation
+        if (projectOpened) { // edit situation
             int selectedIndex = projecttable.getSelectionModel().getSelectedIndex();
             if (selectedIndex != -1) {
-                String projectPath= defaultDirectoryPath + File.separator + "Project" + File.separator;
-                String f2 = projectPath + projecttable.getItems().get(selectedIndex).getProjectName()+".json";
+                String projectPath = defaultDirectoryPath + File.separator + "Project" + File.separator;
+                String f2 = projectPath + projecttable.getItems().get(selectedIndex).getProjectName() + ".json";
                 File file = new File(f2);
                 file.delete();
-                if (examimportfilepath==null) {
-                    examimportfilepath=projecttable.getItems().get(selectedIndex).getExamsPath();
+                if (examimportfilepath == null) {
+                    examimportfilepath = projecttable.getItems().get(selectedIndex).getExamsPath();
                 }
-                Project project=new Project(projectName.getText(),configCombo.getValue(),examimportfilepath);
+                Project project = new Project(projectName.getText(), configCombo.getValue(), examimportfilepath);
                 projectOpened = false;
                 String newJson = gson.toJson(project);
 
@@ -380,12 +473,10 @@ public class Controller implements Initializable {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
             }
-        }
-        else {//create from the beginning
+        } else { // create from the beginning
             File dir = new File(defaultDirectoryPath);
-            System.out.println(defaultDirectoryPath);
+
             dir.mkdir();
             File projectFile = new File(dir, "Project");
             projectFile.mkdir();
@@ -409,20 +500,17 @@ public class Controller implements Initializable {
         updatedTableProject(event);
     }
 
-
     @FXML
     public void updatedTableProject(ActionEvent event) throws IOException {
         String projectFilePath = defaultDirectoryPath + File.separator + "Project" + File.separator;
         File pFile = new File(projectFilePath);
         String[] files = pFile.list();
+        // Check if there are any projects
         if (files == null || files.length == 0) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("No Projects Found");
-            alert.setContentText("There are no project available. Please create one first.");
-            alert.showAndWait();
+            projecttable.getItems().clear(); // Clear table if no projects found
             return;
         }
+
         for (String f : files) {
             String path = projectFilePath + f;
             Project project1 = readJsonFile_Project(path);
@@ -430,7 +518,7 @@ public class Controller implements Initializable {
         }
         projecttable.getItems().clear();
 
-        //re-adding
+        // Re-adding
         ObservableList<Project> obProjectList = FXCollections.observableArrayList(projectList);
         projecttable.setItems(obProjectList);
         projecttableconfig.setCellValueFactory(new PropertyValueFactory<>("config"));
@@ -439,96 +527,113 @@ public class Controller implements Initializable {
         projectList.clear();
     }
 
-
-
-
-
     public void clearProjectMenu() {
         configCombo.setValue("");
         studentfileimport.setText("Import");
         projectName.setText("");
-
     }
+
     @FXML
-    public void projectClearButton(ActionEvent event){
+    public void projectClearButton(ActionEvent event) {
         clearProjectMenu();
-        projectOpened=false;
+        projectOpened = false;
     }
-
 
     @FXML
     public void openProject(ActionEvent event) throws IOException {
+        if (projecttable.getItems().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No Projects Found");
+            alert.setContentText("There are no projects available to edit.");
+            alert.showAndWait();
+            return;
+        }
 
         int selectedIndex = projecttable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
             Project project = projecttable.getItems().get(selectedIndex);
             configCombo.setValue(project.getConfig());
-            if (project.getExamsPath()!=null){
-                Path p1= Paths.get(project.getExamsPath());
+            if (project.getExamsPath() != null) {
+                Path p1 = Paths.get(project.getExamsPath());
                 studentfileimport.setText(p1.getFileName().toString());
+            } else {
+                studentfileimport.setText("");
             }
-            else studentfileimport.setText("");
             projectName.setText(project.getProjectName());
-            projectOpened=true;
+            projectOpened = true;
         }
     }
 
     @FXML
-    public void QuizManagement(ActionEvent event) throws IOException{
+    public void QuizManagement(ActionEvent event) throws IOException {
         int selectedIndex = submissionsTable.getSelectionModel().getSelectedIndex();
-        String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + configComboProject.getValue() + ".json";
+        if (selectedIndex == -1) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Submission Selected");
+            alert.setContentText("Please select a submission to grade.");
+            alert.showAndWait();
+            return;
+        }
+        String pPath = defaultDirectoryPath + File.separator + "Project" + File.separator + configComboProject.getValue() + ".json";
+        Project project2 = readJsonFile_Project(pPath);
+        String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + project2.getConfig() + ".json";
         Configuration config = readJsonFile_Configuration(configPath);
         assert config != null;
-        List<String> results = QuizGrader.gradeSubmissions(submissionFiles.get(selectedIndex).getPath(), config.getFilePath());
-        expected.setText(results.get(2));
-        student.setText(results.get(1));
-        idLabel.setText(results.get(0));
-        scoreLabel.setText(results.get(3));
+        String submissionPath= submissionFolderPath+File.separator+submissionFiles.get(selectedIndex);
+
+        List<String> results = QuizGrader.gradeSubmissions(submissionPath, config.getFilePath());
+
+        if (results.size() >= 4) {
+            idLabel.setText(results.get(0));
+            student.setText(results.get(1));
+            expected.setText(results.get(2));
+            scoreLabel.setText(results.get(3));
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Grading Error");
+            alert.setContentText("An error occurred while grading the submission.");
+            alert.showAndWait();
+        }
     }
 
     @FXML
     public void ImporStudentSubmissions(ActionEvent event) throws IOException {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory != null) {
-            submissionFolderPath = selectedDirectory.getAbsolutePath();
-            String importedSubmissionFile = selectedDirectory.getName();
-            updatedSubmissionsTable(event);
+        String pPath = defaultDirectoryPath + File.separator + "Project" + File.separator + configComboProject.getValue() + ".json";
+        Project project12 = readJsonFile_Project(pPath);
+        submissionFolderPath = project12.getExamsPath();
+        File sub = new File(submissionFolderPath);
+        String[] files = sub.list();
+        for (String file : files) {
+            submissionFiles.add(file);
         }
-    }
-
-    @FXML
-    public void updatedSubmissionsTable(ActionEvent event) throws IOException {
-        File pFile = new File(submissionFolderPath);
-        submissionFiles = new ArrayList<>(Arrays.asList(pFile.listFiles()));
-        List<String> fileNames = submissionFiles.stream()
-                .map(File::getName)
-                .collect(Collectors.toList());
-        ObservableList<String> obProjectList = FXCollections.observableArrayList(fileNames);
+        ObservableList<String> obProjectList = FXCollections.observableArrayList(submissionFiles);
         submissionsTable.setItems(obProjectList);
     }
+
+
     @FXML
     public void runAll(ActionEvent event) throws IOException {
-        int length=submissionsTable.getItems().size();
-        ArrayList<Integer> scores=new ArrayList<>();
-        for (int i=0;i<length;i++){
-            String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + configComboProject.getValue() + ".json";
+        int length = submissionsTable.getItems().size();
+        File sub = new File(submissionFolderPath);
+        File[] files = sub.listFiles();
+        ArrayList<Integer> scores = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            String pPath = defaultDirectoryPath + File.separator + "Project" + File.separator + configComboProject.getValue() + ".json";
+            Project project12 = readJsonFile_Project(pPath);
+            String configPath = defaultDirectoryPath + File.separator + "Configuration" + File.separator + project12.getConfig() + ".json";
             Configuration config = readJsonFile_Configuration(configPath);
-            assert config != null;
-            List<String> results = QuizGrader.gradeSubmissions(submissionFiles.get(i).getPath(), config.getFilePath());
+            List<String> results = QuizGrader.gradeSubmissions(files[i].getPath(), config.getFilePath());
             scores.add(Integer.valueOf(results.get(3)));
         }
-        ObservableList<Integer> ob_score_list=FXCollections.observableArrayList(scores);
+        ObservableList<Integer> ob_score_list = FXCollections.observableArrayList(scores);
         scoreTable.setItems(ob_score_list);
-
-
-
     }
-
 
     @FXML
     private ListView<String> StudentTable;
-
 
     @FXML
     private Button addAnswer;
@@ -545,7 +650,6 @@ public class Controller implements Initializable {
     private Button projectedit;
     @FXML
     private Button projectupdate;
-
 
     @FXML
     private TableView<Project> projecttable;
@@ -566,7 +670,6 @@ public class Controller implements Initializable {
 
     private TableColumn<File, String> submissionsName;
 
-
     @FXML
     private TableColumn<Configuration, String> configtablelang;
 
@@ -577,9 +680,9 @@ public class Controller implements Initializable {
     private TableColumn<Configuration, String> configtablesource;
 
     @FXML
-    private ComboBox<String> configCombo=new ComboBox<>();
+    private ComboBox<String> configCombo = new ComboBox<>();
     @FXML
-    private ComboBox<String> configComboProject =new ComboBox<>();
+    private ComboBox<String> configComboProject = new ComboBox<>();
     @FXML
     private Button configdelete;
 
@@ -611,13 +714,13 @@ public class Controller implements Initializable {
     private Button importconfig;
 
     @FXML
-    private ComboBox<String> langcombo=new ComboBox<>();
+    private ComboBox<String> langcombo = new ComboBox<>();
 
     @FXML
     private Button openstudent;
 
     @FXML
-    private ComboBox<String> projectCombo=new ComboBox<>();
+    private ComboBox<String> projectCombo = new ComboBox<>();
 
     @FXML
     private TextField projectName;
@@ -636,16 +739,25 @@ public class Controller implements Initializable {
     @FXML
     private Button projectSelect;
 
-
-
     @FXML
     private Button studentfileimport;
 
     @FXML
     private TableView<?> table;
+
+    private void loadExistingConfigurations() {
+        try {
+            updateTableView(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-
-
-
-
+    private void loadExistingProjects() {
+        try {
+            updatedTableProject(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

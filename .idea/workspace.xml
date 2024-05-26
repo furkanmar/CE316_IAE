@@ -10,10 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="09c5d233-6e30-42fd-838c-6eb97fc7c90c" name="Changes" comment="edit finished for both configiration and project + import config added + some bugs fixed">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/CE316_Project_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Compiler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/QuizGrader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/QuizGrader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/ce316_project/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/ce316_project/main.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +45,13 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -64,7 +71,7 @@
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/cansu/Belgeler/java/CE316_IAE",
-    "project.structure.last.edited": "Artifacts",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "editor.preferences.fonts.default"

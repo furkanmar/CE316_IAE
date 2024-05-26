@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ce316_project.Controller">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ce316_project.Controller">
    <children>
       <TabPane id="tabpane" layoutX="10.0" layoutY="10.0" prefHeight="778.0" prefWidth="1177.0" style="-fx-background-color: #e9f6f6;">
          <tabs>
@@ -20,14 +12,13 @@
                <content>
                   <AnchorPane id="quizmngpane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Label alignment="CENTER_RIGHT" layoutX="30.0" layoutY="14.0" prefHeight="53.0" prefWidth="84.0" text="Configuration:" textAlignment="CENTER">
+                        <Label alignment="CENTER_RIGHT" layoutX="30.0" layoutY="14.0" prefHeight="53.0" prefWidth="84.0" text="Project:" textAlignment="CENTER">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="configComboProject" layoutX="124.0" layoutY="20.0" prefHeight="42.0" prefWidth="150.0" promptText="Select " />
-                        <Button fx:id="openSubmissions" layoutX="180.0" layoutY="76.0" mnemonicParsing="false" onAction="#ImporStudentSubmissions" prefHeight="57.0" prefWidth="94.0" text="Open" />
-                        <Button fx:id="updateTable" layoutX="30.0" layoutY="76.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="90.0" text="Update" />
+                        <Button fx:id="openSubmissions" layoutX="67.0" layoutY="74.0" mnemonicParsing="false" onAction="#ImporStudentSubmissions" prefHeight="31.0" prefWidth="211.0" text="Open" />
                         <Label layoutX="524.0" layoutY="14.0" prefHeight="36.0" prefWidth="207.0" text="Expected Output:">
                            <font>
                               <Font name="System Bold" size="20.0" />
@@ -64,6 +55,16 @@
                         <ListView fx:id="submissionsTable" layoutX="30.0" layoutY="155.0" prefHeight="433.0" prefWidth="242.0" />
                         <ListView fx:id="scoreTable" layoutX="272.0" layoutY="155.0" prefHeight="433.0" prefWidth="102.0" />
                         <Button fx:id="runAll" layoutX="151.0" layoutY="641.0" mnemonicParsing="false" onAction="#runAll" prefHeight="53.0" prefWidth="121.0" text="Run All" />
+                        <Label layoutX="30.0" layoutY="128.0" prefHeight="17.0" prefWidth="238.0" text="Student ID">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="274.0" layoutY="128.0" prefHeight="17.0" prefWidth="99.0" text="Score">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -108,11 +109,6 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="projectupdate" alignment="CENTER" layoutX="439.0" layoutY="380.0" mnemonicParsing="false" onAction="#updatedTableProject" prefHeight="51.0" prefWidth="150.0" text="Update">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
                         <Button fx:id="projectClear" layoutX="108.0" layoutY="340.0" mnemonicParsing="false" onAction="#projectClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
                      </children>
                   </AnchorPane>
@@ -146,7 +142,7 @@
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button fx:id="exportconfig" layoutX="870.0" layoutY="551.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="150.0" text="Export Configuration">
+                        <Button fx:id="exportconfig" layoutX="870.0" layoutY="551.0" mnemonicParsing="false" onAction="#exportConfig" prefHeight="51.0" prefWidth="150.0" text="Export Configuration">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
@@ -168,11 +164,6 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="configupdate" alignment="CENTER" layoutX="495.0" layoutY="376.0" mnemonicParsing="false" onAction="#updateTableView" prefHeight="51.0" prefWidth="150.0" text="Update">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
                         <Button fx:id="configClear" layoutX="1021.0" layoutY="271.0" mnemonicParsing="false" onAction="#configClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
                      </children>
                   </AnchorPane>
@@ -182,7 +173,8 @@
                <content>
                   <AnchorPane id="helppane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Label id="helplab" alignment="TOP_LEFT" layoutX="20.0" layoutY="14.0" prefHeight="652.0" prefWidth="1071.0" style="-fx-background-color: #c3f7ff;" />
+                        <Label id="helplab" alignment="TOP_LEFT" layoutX="14.0" layoutY="28.0" prefHeight="652.0" prefWidth="1071.0" style="-fx-background-color: #c3f7ff;" />
+                        <TextArea layoutX="33.0" layoutY="57.0" prefHeight="607.0" prefWidth="1047.0" text="Integrated Assignment Environment Help Guide&#10;Overview&#10;The Integrated Assignment Environment (IAE) is designed to streamline the process of managing, creating, and grading quizzes and projects. &#10;This tool is divided into four main tabs: Quiz Management, Project Creation, Configuration, and Help. &#10;Below are detailed instructions on how to use each feature.&#10;Quiz Management&#10;1. Select a Project: &#10;   - Choose a project from the Project dropdown list and click Open.&#10;&#10;2. Load Student Submissions:&#10;   - Click the Open button to load student submissions. The submissions will be listed in the Student ID section.&#10;&#10;3. Run a Quiz:&#10;   - Select a student submission from the list and click Run to compare the student's output with the expected output.&#10;   - The student's ID and score will be displayed in the corresponding fields.&#10;&#10;4. Run All Quizzes:&#10;   - Click Run All to grade all student submissions at once. Scores will be displayed in the Score column next to each student ID.&#10;Project Creation&#10;1. Create a New Project:&#10;   - Enter the project name in the Project Name field.&#10;   - Select a configuration from the Configuration dropdown list.&#10;   - Click Import to load the student file directory.&#10;   - Click Save to create and save the new project.&#10;&#10;2. Edit an Existing Project:&#10;   - Select a project from the table and click Edit.&#10;   - Modify the project details as needed.&#10;   - Click Save to update the project information.&#10;&#10;3. Delete a Project:&#10;   - Select a project from the table and click Delete.&#10;&#10;4. Clear Fields:&#10;   - Click Clear to reset all fields.&#10;Configuration&#10;1. Create or Save a Configuration:&#10;   - Enter the configuration name in the Configuration Name field.&#10;   - Select the programming language from the Language dropdown list.&#10;   - Click Import to load the source file.&#10;   - Click Save or Create New to save the configuration.&#10;&#10;2. Edit an Existing Configuration:&#10;   - Select a configuration from the table and click Edit.&#10;   - Modify the configuration details as needed.&#10;   - Click Save to update the configuration information.&#10;&#10;3. Delete a Configuration:&#10;   - Select a configuration from the table and click Delete.&#10;&#10;4. Clear Fields:&#10;   - Click Clear to reset all fields.&#10;&#10;5. Import Configuration:&#10;   - Click Import Configuration to load a configuration file from your system.&#10;&#10;6. Export Configuration:&#10;   - Select a configuration from the table and click Export Configuration to save the configuration file to your system.&#10;General Tips&#10;- Navigating Tabs: Use the tabs at the top to switch between Quiz Management, Project Creation, Configuration, and Help sections.&#10;- Field Validation: Ensure that all required fields are filled out correctly before saving or running any operations.&#10;- File Paths: The default directory path for configurations and projects is automatically set to the user's default directory.&#10;Additional Notes&#10;- The Help tab contains these instructions and other relevant information for using the IAE.&#10;- Ensure that all files are correctly formatted and compatible with the selected language and project configurations.&#10;- If you encounter any issues or errors, refer to the Help tab for troubleshooting tips or contact support.&#10;" />
                      </children>
                   </AnchorPane>
                </content>
