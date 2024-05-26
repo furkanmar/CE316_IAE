@@ -10,6 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="09c5d233-6e30-42fd-838c-6eb97fc7c90c" name="Changes" comment="edit finished for both configiration and project + import config added + some bugs fixed">
+      <change afterPath="$PROJECT_DIR$/IAE_Help_Guide.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/ce316_project/Controller.java" afterDir="false" />
@@ -70,7 +71,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/cansu/Belgeler/java/CE316_IAE",
+    "last_opened_file_path": "C:/Users/ezgie/IdeaProjects/fxProject/CE316_IAE",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -79,7 +80,12 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ezgie\IdeaProjects\fxProject\CE316_IAE" />
+      <recent name="C:\Users\ezgie\IdeaProjects\fxProject\CE316_IAE\src\main\java\com\example\ce316_project" />
       <recent name="C:\Users\Kemal can\Documents\Kodlama\CE316_Project\src\main\resources\com\example\ce316_project" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ezgie\IdeaProjects\fxProject\CE316_IAE\src\main\resources\com\example\ce316_project" />
     </key>
   </component>
   <component name="RunManager">

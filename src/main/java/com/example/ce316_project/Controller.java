@@ -134,6 +134,8 @@ public class Controller implements Initializable {
             return;
         }
 
+
+
         filePath = defaultDirectoryPath + File.separator + "Configuration" + File.separator;
         int selectedIndex = configtable.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
@@ -318,6 +320,26 @@ public class Controller implements Initializable {
             }
             configname.setText(config.getConfigName());
             configOpened = true;
+        }
+    }
+    @FXML
+    void HelpButton(ActionEvent event) {
+
+        String helpDoc = "IAE_Help_Guide.pdf";
+
+        File file = new File(helpDoc);
+        if (file.exists()){
+            try {
+                String filePath = new File(helpDoc).getAbsolutePath();
+                Process process = Runtime.getRuntime().exec("cmd /c start \"\" \"" + filePath + "\"");
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    System.out.println("Failed to open the file.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -645,6 +667,8 @@ public class Controller implements Initializable {
 
     @FXML
     private Button projectdelete;
+    @FXML
+    private Button projecthelp;
 
     @FXML
     private Button projectedit;
