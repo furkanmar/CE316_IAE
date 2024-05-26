@@ -125,20 +125,20 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="configname" layoutX="870.0" layoutY="38.0" prefHeight="50.0" prefWidth="149.0" promptText="Name" />
+                        <TextField fx:id="configname" layoutX="870.0" layoutY="38.0" prefHeight="50.0" prefWidth="229.0" promptText="Name" />
                         <Label alignment="CENTER_RIGHT" layoutX="645.0" layoutY="198.0" prefHeight="49.0" prefWidth="214.0" text="Source File:">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" onAction="#ImportsourceFile" prefHeight="51.0" prefWidth="150.0" text="Import" />
+                        <Button fx:id="sourcefileimport" layoutX="870.0" layoutY="198.0" mnemonicParsing="false" onAction="#ImportsourceFile" prefHeight="51.0" prefWidth="228.0" text="Import" />
                         <Button fx:id="createconfig" layoutX="870.0" layoutY="271.0" mnemonicParsing="false" onAction="#createConfig" prefHeight="51.0" prefWidth="150.0" text="Save or Create New" />
                         <Label alignment="CENTER_RIGHT" layoutX="645.0" layoutY="118.0" prefHeight="49.0" prefWidth="214.0" text="Language:">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="langcombo" layoutX="870.0" layoutY="118.0" prefHeight="51.0" prefWidth="150.0" />
+                        <ComboBox fx:id="langcombo" layoutX="870.0" layoutY="118.0" prefHeight="51.0" prefWidth="225.0" />
                         <Button fx:id="importconfig" layoutX="870.0" layoutY="478.0" mnemonicParsing="false" onAction="#importConfig" prefHeight="51.0" prefWidth="150.0" text="Import Configuration">
                            <font>
                               <Font name="System Bold" size="13.0" />

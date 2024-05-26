@@ -366,19 +366,43 @@ public class Controller implements Initializable {
         clearConfigMenu();
         configOpened = false;
     }
-
     @FXML
     public void importConfig(ActionEvent event) throws IOException {
         configOpened = false;
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
-        importConfigPath = selectedFile.getPath();
-        Configuration config = readJsonFile_Configuration(importConfigPath);
-        configname.setText(config.getConfigName());
-        langcombo.setValue(config.getLanguage());
-        sourcefileimport.setText(config.getFilePath());
-        createConfig(event);
+        if (selectedFile != null) {
+            importConfigPath = selectedFile.getPath();
+            Configuration config = readJsonFile_Configuration(importConfigPath);
+            if (config != null) {
+                configname.setText(config.getConfigName());
+                langcombo.setValue(config.getLanguage());
+                sourcefileimport.setText(config.getFilePath());
+
+                // Add the new configuration to the list
+                configList.add(config);
+
+                // Update the table view
+                updateTableViewWithNewConfig(config);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Import Failed");
+                alert.setHeaderText("Invalid Configuration File");
+                alert.setContentText("The selected file could not be imported as a valid configuration.");
+                alert.showAndWait();
+            }
+        }
     }
+
+    private void updateTableViewWithNewConfig(Configuration config) {
+        ObservableList<Configuration> configurationList = configtable.getItems();
+        configurationList.add(config);
+        configtable.setItems(configurationList);
+        configtablename.setCellValueFactory(new PropertyValueFactory<>("configName"));
+        configtablesource.setCellValueFactory(new PropertyValueFactory<>("filePath"));
+        configtablelang.setCellValueFactory(new PropertyValueFactory<>("language"));
+    }
+
 
     @FXML
     public void exportConfig(ActionEvent event) {
