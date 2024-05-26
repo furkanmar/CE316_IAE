@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ce316_project.Controller">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ce316_project.Controller">
    <children>
       <TabPane id="tabpane" layoutX="10.0" layoutY="10.0" prefHeight="778.0" prefWidth="1177.0" style="-fx-background-color: #e9f6f6;">
          <tabs>
@@ -73,7 +65,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="projecthelp" layoutX="307.0" layoutY="28.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1116.0" layoutY="700.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
@@ -119,7 +111,7 @@
                            </font>
                         </Button>
                         <Button fx:id="projectClear" layoutX="108.0" layoutY="340.0" mnemonicParsing="false" onAction="#projectClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
-                        <Button fx:id="projecthelp" layoutX="351.0" layoutY="42.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1115.0" layoutY="704.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
@@ -175,7 +167,7 @@
                            </font>
                         </Button>
                         <Button fx:id="configClear" layoutX="1021.0" layoutY="271.0" mnemonicParsing="false" onAction="#configClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
-                        <Button fx:id="projecthelp" layoutX="495.0" layoutY="38.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1116.0" layoutY="704.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
