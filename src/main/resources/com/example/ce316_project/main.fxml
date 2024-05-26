@@ -6,7 +6,7 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ce316_project.Controller">
    <children>
-      <TabPane id="tabpane" layoutX="10.0" layoutY="10.0" prefHeight="778.0" prefWidth="1177.0" style="-fx-background-color: #e9f6f6;">
+      <TabPane id="tabpane" layoutX="12.0" layoutY="11.0" prefHeight="778.0" prefWidth="1177.0" style="-fx-background-color: #e9f6f6;">
          <tabs>
             <Tab id="tabquizmng" closable="false" style="-fx-background-color: #e9f6f6;" text="Quiz Management">
                <content>
@@ -65,7 +65,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="projecthelp" layoutX="1116.0" layoutY="700.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1084.0" layoutY="682.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
@@ -111,7 +111,7 @@
                            </font>
                         </Button>
                         <Button fx:id="projectClear" layoutX="108.0" layoutY="340.0" mnemonicParsing="false" onAction="#projectClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
-                        <Button fx:id="projecthelp" layoutX="1115.0" layoutY="704.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1082.0" layoutY="678.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
@@ -167,7 +167,7 @@
                            </font>
                         </Button>
                         <Button fx:id="configClear" layoutX="1021.0" layoutY="271.0" mnemonicParsing="false" onAction="#configClearButton" prefHeight="50.0" prefWidth="77.0" text="Clear" />
-                        <Button fx:id="projecthelp" layoutX="1116.0" layoutY="704.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
+                        <Button fx:id="projecthelp" layoutX="1078.0" layoutY="672.0" mnemonicParsing="false" onAction="#HelpButton" text="Help" />
                      </children>
                   </AnchorPane>
                </content>
